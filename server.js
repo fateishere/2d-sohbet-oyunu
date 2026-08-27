@@ -9,162 +9,85 @@ const io = new Server(server);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Oyun Durumları (State)
+// Gelişmiş Oyun Durumu
 const state = {
-    chat: { players: {}, coins: [] },
-    tank: { players: {}, bullets: [], enemies: [], wave: 1, enemiesToSpawn: 5 }
+    players: {},
+    map: { width: 2000, height: 2000 } // Artık devasa bir haritamız var
 };
 
-// --- YARDIMCI FONKSİYONLAR ---
-function spawnEnemy() {
-    state.tank.enemies.push({
-        id: Math.random().toString(),
-        x: Math.random() * 800,
-        y: Math.random() < 0.5 ? -50 : 650, // Harita dışından gelsinler
-        hp: 30 + (state.tank.wave * 10), // Wave arttıkça can artar
-        speed: 2 + (state.tank.wave * 0.2)
-    });
-}
-
-// --- SUNUCU OYUN DÖNGÜSÜ (TICK) - 30 FPS ---
+// Saniyede 30 kez çalışan ana motor
 setInterval(() => {
-    // 1. Mermileri Güncelle
-    for (let i = state.tank.bullets.length - 1; i >= 0; i--) {
-        let b = state.tank.bullets[i];
-        b.x += b.vx;
-        b.y += b.vy;
-        
-        // Ekran dışına çıkan mermiyi sil
-        if (b.x < -50 || b.x > 850 || b.y < -50 || b.y > 650) {
-            state.tank.bullets.splice(i, 1);
-        }
-    }
+    io.emit('gameState', state);
+}, 1000 / 30);
 
-    // 2. Düşmanları Güncelle (En yakın oyuncuyu takip et)
-    for (let i = state.tank.enemies.length - 1; i >= 0; i--) {
-        let enemy = state.tank.enemies[i];
-        
-        // Hedef bul (En yakın oyuncu)
-        let target = null;
-        let minDist = Infinity;
-        for (let pid in state.tank.players) {
-            let p = state.tank.players[pid];
-            let dist = Math.hypot(p.x - enemy.x, p.y - enemy.y);
-            if (dist < minDist) { minDist = dist; target = p; }
-        }
-
-        if (target) {
-            let angle = Math.atan2(target.y - enemy.y, target.x - enemy.x);
-            enemy.x += Math.cos(angle) * enemy.speed;
-            enemy.y += Math.sin(angle) * enemy.speed;
-        }
-
-        // Mermi - Düşman Çarpışma Kontrolü
-        for (let j = state.tank.bullets.length - 1; j >= 0; j--) {
-            let b = state.tank.bullets[j];
-            if (Math.hypot(enemy.x - b.x, enemy.y - b.y) < 25) { // Vuruldu!
-                enemy.hp -= b.damage;
-                state.tank.bullets.splice(j, 1); // Mermiyi sil
-                
-                if (enemy.hp <= 0) {
-                    // Düşman öldü
-                    if (state.tank.players[b.ownerId]) {
-                        state.tank.players[b.ownerId].score += 10;
-                    }
-                    state.tank.enemies.splice(i, 1);
-                    break;
-                }
-            }
-        }
-    }
-
-    // 3. Wave Kontrolü
-    if (state.tank.enemies.length === 0 && Object.keys(state.tank.players).length > 0) {
-        if (state.tank.enemiesToSpawn <= 0) {
-            // WAVE BİTTİ - SONRAKİ AŞAMA KART SEÇİMİ OLACAK (Şimdilik direkt geçiyoruz)
-            state.tank.wave++;
-            state.tank.enemiesToSpawn = state.tank.wave * 5;
-            io.to('tank').emit('waveComplete', state.tank.wave);
-        } else {
-            spawnEnemy();
-            state.tank.enemiesToSpawn--;
-        }
-    }
-
-    // Durumu odalara gönder
-    io.to('chat').emit('gameState', state.chat);
-    io.to('tank').emit('tankState', state.tank);
-
-}, 1000 / 30); // Saniyede 30 kez
-
-
-// --- SOCKET.IO BAĞLANTILARI ---
 io.on('connection', (socket) => {
-    let currentRoom = null;
+    console.log('Yeni oyuncu bağlandı:', socket.id);
 
     socket.on('joinGame', (data) => {
-        currentRoom = data.mode; // 'chat' veya 'tank'
-        socket.join(currentRoom);
-
-        if (currentRoom === 'chat') {
-            state.chat.players[socket.id] = { x: 400, y: 300, name: data.name, color: data.color, msg: '' };
-        } else if (currentRoom === 'tank') {
-            state.tank.players[socket.id] = { 
-                x: 400, y: 300, name: data.name, color: data.color, 
-                angle: 0, hp: 100, maxHp: 100, score: 0,
-                attackSpeed: 500, damage: 20 // İleride kartlarla gelişecek
-            };
-        }
+        // Oyuncuyu haritanın ortasında başlat
+        state.players[socket.id] = {
+            x: state.map.width / 2,
+            y: state.map.height / 2,
+            name: data.name.substring(0, 15) || 'Anonim',
+            color: data.color,
+            msg: '',
+            isTyping: false
+        };
+        // Herkese yeni birinin katıldığını bildir (Ses çalmak için)
+        socket.broadcast.emit('playSound', 'join');
     });
 
     socket.on('move', (dir) => {
-        let p = currentRoom === 'chat' ? state.chat.players[socket.id] : state.tank.players[socket.id];
+        let p = state.players[socket.id];
         if (!p) return;
         
-        let speed = currentRoom === 'tank' ? 5 : 8;
+        let speed = 10;
         if (dir === 'UP') p.y -= speed;
         if (dir === 'DOWN') p.y += speed;
         if (dir === 'LEFT') p.x -= speed;
         if (dir === 'RIGHT') p.x += speed;
+
+        // Harita dışına çıkmayı engelle (Sınır Çarpışma Testi)
+        if (p.x < 20) p.x = 20;
+        if (p.x > state.map.width - 20) p.x = state.map.width - 20;
+        if (p.y < 20) p.y = 20;
+        if (p.y > state.map.height - 20) p.y = state.map.height - 20;
     });
 
-    // --- TANK MODU ÖZEL KOMUTLAR ---
-    socket.on('mouseAim', (angle) => {
-        if (currentRoom === 'tank' && state.tank.players[socket.id]) {
-            state.tank.players[socket.id].angle = angle;
-        }
+    socket.on('typing', (status) => {
+        if (state.players[socket.id]) state.players[socket.id].isTyping = status;
     });
 
-    socket.on('shoot', () => {
-        if (currentRoom === 'tank' && state.tank.players[socket.id]) {
-            let p = state.tank.players[socket.id];
-            // Mermi oluştur
-            state.tank.bullets.push({
-                x: p.x + Math.cos(p.angle) * 30, // Namlunun ucundan çıksın
-                y: p.y + Math.sin(p.angle) * 30,
-                vx: Math.cos(p.angle) * 15, // Mermi hızı
-                vy: Math.sin(p.angle) * 15,
-                damage: p.damage,
-                ownerId: socket.id
-            });
-        }
-    });
-
-    // --- SOHBET MODU ÖZEL KOMUTLAR ---
     socket.on('chat', (text) => {
-        if (currentRoom === 'chat' && state.chat.players[socket.id]) {
-            state.chat.players[socket.id].msg = text;
-            setTimeout(() => {
-                if (state.chat.players[socket.id]) state.chat.players[socket.id].msg = '';
-            }, 4000);
+        if (!state.players[socket.id]) return;
+        
+        // ÖZEL KOMUT SİSTEMİ: /ses <link>
+        if (text.startsWith('/ses ')) {
+            const url = text.split(' ')[1];
+            if (url) {
+                io.emit('playCustomSound', url); // Tüm oyunculara bu sesi çalmasını emret
+                io.emit('serverMessage', `${state.players[socket.id].name} bir ses açtı!`);
+            }
+            return;
         }
+
+        // Normal Mesaj
+        state.players[socket.id].msg = text;
+        io.emit('playSound', 'msg'); // Herkese mesaj sesi çal
+        io.emit('newChatMessage', { name: state.players[socket.id].name, text: text, color: state.players[socket.id].color });
+
+        setTimeout(() => {
+            if (state.players[socket.id]) state.players[socket.id].msg = '';
+        }, 5000); // Mesaj 5 saniye kafasında kalsın
     });
 
     socket.on('disconnect', () => {
-        if (state.chat.players[socket.id]) delete state.chat.players[socket.id];
-        if (state.tank.players[socket.id]) delete state.tank.players[socket.id];
+        if (state.players[socket.id]) {
+            io.emit('playSound', 'leave');
+            delete state.players[socket.id];
+        }
     });
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`Sunucu aktif: ${PORT}`));
+server.listen(PORT, () => console.log(`Gelişmiş Sunucu aktif: ${PORT}`));
