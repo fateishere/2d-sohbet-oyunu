@@ -7,73 +7,133 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-// HTML dosyamızı sunmak için
 app.use(express.static(path.join(__dirname, 'public')));
 
 const players = {};
+let coins = [];
+
+// Haritadaki sabit engeller
+const walls = [
+    { x: 150, y: 120, w: 500, h: 20 },
+    { x: 150, y: 440, w: 500, h: 20 },
+    { x: 380, y: 220, w: 40, h: 160 }
+];
+
+// Rastgele 5 tane altın/yıldız oluştur
+function spawnCoins() {
+    while (coins.length < 5) {
+        coins.push({
+            id: Math.random(),
+            x: Math.floor(Math.random() * 720) + 40,
+            y: Math.floor(Math.random() * 520) + 40
+        });
+    }
+}
+spawnCoins();
+
+function checkWallCollision(newX, newY) {
+    const radius = 18;
+    for (let w of walls) {
+        if (
+            newX + radius > w.x &&
+            newX - radius < w.x + w.w &&
+            newY + radius > w.y &&
+            newY - radius < w.y + w.h
+        ) {
+            return true;
+        }
+    }
+    return false;
+}
 
 io.on('connection', (socket) => {
-    console.log('Yeni bir oyuncu katıldı:', socket.id);
-
-    // Rastgele renk ve başlangıç pozisyonu
-    const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
     players[socket.id] = {
-        x: Math.floor(Math.random() * 500) + 50,
-        y: Math.floor(Math.random() * 300) + 50,
-        color: randomColor,
-        name: 'Oyuncu_' + socket.id.substr(0, 3),
-        msg: ''
+        x: 100,
+        y: 100,
+        color: '#ff4757',
+        avatar: '🐱',
+        name: 'Oyuncu',
+        score: 0,
+        msg: '',
+        emote: ''
     };
 
-    // Tüm oyunculara güncel listeyi gönder
-    io.emit('state', players);
+    socket.emit('init', { walls });
+    io.emit('state', { players, coins });
 
-    // Yön tuşları veya WASD ile hareket
+    socket.on('joinGame', (data) => {
+        if (players[socket.id]) {
+            players[socket.id].name = data.name || 'Misafir';
+            players[socket.id].color = data.color || '#ff4757';
+            players[socket.id].avatar = data.avatar || '🐱';
+            io.emit('state', { players, coins });
+        }
+    });
+
     socket.on('move', (dir) => {
         const p = players[socket.id];
         if (!p) return;
-        const speed = 10;
-        
-        if (dir === 'UP') p.y = Math.max(20, p.y - speed);
-        if (dir === 'DOWN') p.y = Math.min(580, p.y + speed);
-        if (dir === 'LEFT') p.x = Math.max(20, p.x - speed);
-        if (dir === 'RIGHT') p.x = Math.min(780, p.x + speed);
+        const speed = 8;
+        let nextX = p.x;
+        let nextY = p.y;
 
-        io.emit('state', players);
+        if (dir === 'UP') nextY = Math.max(25, p.y - speed);
+        if (dir === 'DOWN') nextY = Math.min(575, p.y + speed);
+        if (dir === 'LEFT') nextX = Math.max(25, p.x - speed);
+        if (dir === 'RIGHT') nextX = Math.min(775, p.x + speed);
+
+        if (!checkWallCollision(nextX, nextY)) {
+            p.x = nextX;
+            p.y = nextY;
+
+            // Altın Toplama Kontrolü
+            coins = coins.filter(coin => {
+                const dist = Math.hypot(p.x - coin.x, p.y - coin.y);
+                if (dist < 28) {
+                    p.score += 10;
+                    return false; // Altını haritadan kaldır
+                }
+                return true;
+            });
+
+            spawnCoins();
+            io.emit('state', { players, coins });
+        }
     });
 
-    // Mesaj geldiğinde
+    // Sohbet Mesajı
     socket.on('chat', (text) => {
         if (players[socket.id]) {
             players[socket.id].msg = text;
-            io.emit('state', players);
-
-            // 4 saniye sonra mesaj baloncuğu kaybolsun
+            io.emit('state', { players, coins });
             setTimeout(() => {
                 if (players[socket.id]) {
                     players[socket.id].msg = '';
-                    io.emit('state', players);
+                    io.emit('state', { players, coins });
                 }
             }, 4000);
         }
     });
 
-    // İsim Değiştirme
-    socket.on('setName', (name) => {
+    // Emote (Hızlı İfade)
+    socket.on('sendEmote', (emote) => {
         if (players[socket.id]) {
-            players[socket.id].name = name;
-            io.emit('state', players);
+            players[socket.id].emote = emote;
+            io.emit('state', { players, coins });
+            setTimeout(() => {
+                if (players[socket.id]) {
+                    players[socket.id].emote = '';
+                    io.emit('state', { players, coins });
+                }
+            }, 2500);
         }
     });
 
     socket.on('disconnect', () => {
-        console.log('Oyuncu ayrıldı:', socket.id);
         delete players[socket.id];
-        io.emit('state', players);
+        io.emit('state', { players, coins });
     });
 });
 
-const PORT = 3000;
-server.listen(PORT, () => {
-    console.log(`Sunucu çalışıyor! Tarayıcıdan http://localhost:${PORT} adresine gir.`);
-});
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => console.log(`Sunucu aktif: ${PORT}`));
