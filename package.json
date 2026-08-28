@@ -1,14 +1,14 @@
 {
-  "name": "neon-sohbet",
-  "version": "3.0.0",
-  "description": "Neon multiplayer sohbet + proximity voice + vents",
+  "name": "neon-arena",
+  "version": "4.0.0",
+  "description": "Neon multiplayer social arena with voice, roles, tasks",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.21.0",
-    "socket.io": "^4.7.5"
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
   },
   "engines": {
     "node": ">=18"
