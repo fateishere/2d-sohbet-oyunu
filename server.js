@@ -12,36 +12,32 @@ app.use(express.static(path.join(__dirname, 'public')));
 const state = {
     players: {},
     map: { 
-        width: 2500, 
-        height: 2500,
+        width: 3000, 
+        height: 3000,
         vents: [
-            { id: 1, x: 200, y: 200 },
-            { id: 2, x: 2300, y: 200 },
-            { id: 3, x: 1250, y: 1250 },
-            { id: 4, x: 200, y: 2300 },
-            { id: 5, x: 2300, y: 2300 }
+            { id: 1, x: 300, y: 300, name: "Kuzey-Batı Reaktörü" },
+            { id: 2, x: 2700, y: 300, name: "Kuzey-Doğu Gözlem" },
+            { id: 3, x: 1500, y: 1500, name: "Merkez Çekirdek" },
+            { id: 4, x: 300, y: 2700, name: "Güney-Batı Depo" },
+            { id: 5, x: 2700, y: 2700, name: "Güney-Doğu Hangar" }
         ]
     }
 };
 
-// 60 FPS Kaymak Gibi Fizik Motoru
 setInterval(() => {
     for (let id in state.players) {
         let p = state.players[id];
-        if (p.inVent) continue; // Ventteyse hareket edemez
+        if (p.inVent) continue; 
 
-        // İvme uygula
         p.vx += p.moveX * p.speed;
         p.vy += p.moveY * p.speed;
 
-        // Sürtünme (Friction) - Akıcı durma sağlar
-        p.vx *= 0.85;
-        p.vy *= 0.85;
+        p.vx *= 0.82; // Sürtünme artırıldı (daha kontrollü kayış)
+        p.vy *= 0.82;
 
         p.x += p.vx;
         p.y += p.vy;
 
-        // Sınırlar
         if (p.x < 30) { p.x = 30; p.vx = 0; }
         if (p.x > state.map.width - 30) { p.x = state.map.width - 30; p.vx = 0; }
         if (p.y < 30) { p.y = 30; p.vy = 0; }
@@ -53,20 +49,18 @@ setInterval(() => {
 io.on('connection', (socket) => {
     socket.on('joinGame', (data) => {
         state.players[socket.id] = {
-            x: 1250, y: 1250, vx: 0, vy: 0, moveX: 0, moveY: 0,
-            speed: 1.5,
+            x: 1500, y: 1500, vx: 0, vy: 0, moveX: 0, moveY: 0,
+            speed: 1.8, // Hız artırıldı
             name: data.name.substring(0, 15) || 'Anonim Sörfçü',
             color: data.color,
             modelType: data.modelType,
             msg: '',
-            isTyping: false,
+            isSpeaking: false,
             inVent: false,
             currentVent: null
         };
-        socket.broadcast.emit('playSound', 'join');
     });
 
-    // Vektörel (Yönlü) Hareket Alımı (Mobildeki Joystick ve PC için)
     socket.on('move', (vec) => {
         if (state.players[socket.id] && !state.players[socket.id].inVent) {
             state.players[socket.id].moveX = vec.x;
@@ -74,18 +68,15 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Vent Sistemi Kontrolü
     socket.on('toggleVent', () => {
         let p = state.players[socket.id];
         if (!p) return;
 
         if (p.inVent) {
-            // Ventten Çık
             p.inVent = false;
             p.currentVent = null;
         } else {
-            // En yakın venti bul ve gir
-            let nearest = state.map.vents.find(v => Math.hypot(v.x - p.x, v.y - p.y) < 80);
+            let nearest = state.map.vents.find(v => Math.hypot(v.x - p.x, v.y - p.y) < 100);
             if (nearest) {
                 p.inVent = true;
                 p.currentVent = nearest.id;
@@ -104,31 +95,37 @@ io.on('connection', (socket) => {
                 p.x = targetVent.x;
                 p.y = targetVent.y;
                 p.currentVent = targetVent.id;
+                // Işınlanma efekti için sunucudan tetik gönderiyoruz
+                io.emit('ventEffect', { x: p.x, y: p.y, color: p.color });
             }
         }
     });
 
-    // Sesli Sohbet (Voice Chat)
+    // Optimize Edilmiş Mic Sistemi
     socket.on('voiceStream', (audioData) => {
-        // Gelen ses paketini diğer herkese yolla (kendi kendine yankı yapmaması için broadcast)
-        socket.broadcast.emit('voiceStream', { id: socket.id, audio: audioData });
+        if (state.players[socket.id]) {
+            state.players[socket.id].isSpeaking = true;
+            socket.broadcast.emit('voiceStream', { id: socket.id, audio: audioData });
+            
+            // Konuşma simgesini kapatmak için zamanlayıcı (chunk gelmezse kapanır)
+            clearTimeout(socket.speakTimer);
+            socket.speakTimer = setTimeout(() => {
+                if(state.players[socket.id]) state.players[socket.id].isSpeaking = false;
+            }, 500);
+        }
     });
 
     socket.on('chat', (text) => {
         if (!state.players[socket.id]) return;
         state.players[socket.id].msg = text;
-        io.emit('playSound', 'msg');
         io.emit('newChatMessage', { name: state.players[socket.id].name, text: text, color: state.players[socket.id].color });
         setTimeout(() => { if (state.players[socket.id]) state.players[socket.id].msg = ''; }, 5000);
     });
 
     socket.on('disconnect', () => {
-        if (state.players[socket.id]) {
-            io.emit('playSound', 'leave');
-            delete state.players[socket.id];
-        }
+        if (state.players[socket.id]) delete state.players[socket.id];
     });
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`60 FPS Sunucu Aktif: ${PORT}`));
+server.listen(PORT, () => console.log(`Gelişmiş Sunucu Aktif: ${PORT}`));
