@@ -2,88 +2,96 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <!-- MOBİL UYUM İÇİN ZORUNLU ETİKET -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sohbet Evreni - Mobil & Ses Destekli</title>
+    <title>Sohbet Evreni V3: Among Us Modu</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&display=swap');
         
-        body { margin: 0; background: #0a0a12; color: #fff; font-family: 'Poppins', sans-serif; overflow: hidden; touch-action: none; }
+        body { margin: 0; background: #050505; color: #fff; font-family: 'Chakra Petch', sans-serif; overflow: hidden; user-select: none; }
         
         /* GİRİŞ EKRANI */
-        #menuUI { position: fixed; width: 100vw; height: 100vh; background: radial-gradient(circle at center, #1f1c2c 0%, #000000 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; transition: opacity 0.5s; }
-        .box { background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 80%; max-width: 400px; }
-        h1 { font-weight: 800; font-size: 2rem; background: -webkit-linear-gradient(#00fff5, #ff00c8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        input, select { padding: 15px; width: calc(100% - 30px); margin-bottom: 20px; background: rgba(0,0,0,0.4); border: 2px solid #333; color: white; border-radius: 10px; font-family: 'Poppins'; font-size: 16px; outline: none; transition: 0.3s; }
+        #startScreen { position: fixed; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 200; cursor: pointer; }
+        #startScreen h1 { font-size: 3rem; color: #00fff5; text-shadow: 0 0 20px #00fff5; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.5; } }
+
+        #menuUI { display: none; position: fixed; width: 100vw; height: 100vh; background: radial-gradient(circle at center, #111 0%, #000 100%); flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
+        .box { background: rgba(20, 20, 20, 0.8); padding: 40px; border-radius: 15px; border: 2px solid #333; text-align: center; box-shadow: 0 0 50px rgba(0,255,245,0.2); width: 80%; max-width: 400px; }
+        input, select, button { padding: 15px; width: calc(100% - 30px); margin-bottom: 20px; background: #000; border: 2px solid #555; color: white; border-radius: 8px; font-family: inherit; font-size: 16px; outline: none; }
         input:focus { border-color: #00fff5; }
-        .btn { padding: 15px; width: 100%; background: linear-gradient(45deg, #00fff5, #0055ff); color: white; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; text-transform: uppercase; letter-spacing: 2px; }
-        
-        /* OYUN İÇİ ARAYÜZ (HUD) */
+        button { background: #00fff5; color: #000; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
+        button:hover { background: #fff; box-shadow: 0 0 20px #00fff5; }
+
+        /* OYUN İÇİ */
         #gameArea { display: none; width: 100vw; height: 100vh; position: relative; }
         canvas { display: block; }
         
-        /* SOHBET GEÇMİŞİ KUTUSU */
-        #chatLogBox { position: absolute; top: 20px; left: 20px; width: 300px; height: 250px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; pointer-events: none; z-index: 10; font-size: 14px; backdrop-filter: blur(5px); }
-        .log-msg { background: rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; word-wrap: break-word; }
-        .sys-msg { color: #ffeb3b; font-style: italic; font-size: 12px; }
-
-        /* MESAJ YAZMA KUTUSU */
-        #inputArea { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; display: flex; gap: 10px; z-index: 10; }
-        #chatInput { margin: 0; width: 100%; border-radius: 20px; border: 2px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.8); }
+        /* ARAYÜZ ELEMANLARI */
+        #chatLogBox { position: absolute; top: 20px; left: 20px; width: 350px; height: 250px; background: rgba(0,0,0,0.7); border: 1px solid #333; border-radius: 10px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; pointer-events: none; z-index: 10; font-size: 14px; }
+        .log-msg { background: rgba(255,255,255,0.05); padding: 5px 10px; border-radius: 5px; word-wrap: break-word; }
         
-        /* MOBİL KONTROLLER (Sadece mobilde görünür) */
-        #mobileControls { display: none; position: absolute; bottom: 100px; left: 20px; width: 150px; height: 150px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 5px; z-index: 20; }
-        .d-btn { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; user-select: none; }
-        .d-btn:active { background: rgba(255,255,255,0.4); }
-        #btn-up { grid-column: 2; grid-row: 1; }
-        #btn-left { grid-column: 1; grid-row: 2; }
-        #btn-right { grid-column: 3; grid-row: 2; }
-        #btn-down { grid-column: 2; grid-row: 3; }
+        #inputArea { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 700px; display: flex; gap: 10px; z-index: 10; }
+        #chatInput { margin: 0; width: 100%; border-radius: 10px; border: 1px solid #444; background: rgba(0,0,0,0.9); box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
 
-        /* Medya Sorgusu: Ekran küçükse mobil kontrolleri göster, sohbet günlüğünü küçült */
-        @media (max-width: 768px) {
-            #mobileControls { display: grid; }
-            #chatLogBox { width: 200px; height: 150px; font-size: 12px; }
-            #inputArea { bottom: 10px; }
-        }
+        /* MINIMAP (RADAR) */
+        #minimap { position: absolute; top: 20px; right: 20px; width: 200px; height: 200px; background: rgba(0,20,0,0.8); border: 2px solid #0f0; border-radius: 50%; overflow: hidden; z-index: 10; box-shadow: 0 0 20px rgba(0,255,0,0.3); pointer-events: none; }
+        
+        /* ETKİLEŞİM UYARISI */
+        #actionPrompt { position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; font-weight: bold; color: #ffeb3b; text-shadow: 0 0 10px #ffeb3b; display: none; z-index: 20; }
+        
+        /* VENT MENÜSÜ */
+        #ventUI { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); display: none; gap: 20px; z-index: 20; }
+        .v-btn { padding: 15px 30px; background: #222; border: 2px solid #fff; color: #fff; font-weight: bold; border-radius: 10px; cursor: pointer; }
+        .v-btn:hover { background: #555; }
+
+        /* KONTROLLER BİLGİSİ */
+        #controlsInfo { position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 10px; font-size: 12px; color: #aaa; pointer-events: none; }
     </style>
     <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
 
-    <!-- GİRİŞ EKRANI -->
+    <!-- SES KİLİDİNİ AÇMAK İÇİN İLK EKRAN -->
+    <div id="startScreen" onclick="initAudio()">
+        <h1>SİSTEMİ BAŞLATMAK İÇİN TIKLA</h1>
+    </div>
+
+    <!-- MENÜ -->
     <div id="menuUI">
         <div class="box">
-            <h1>NEON SOHBET</h1>
-            <p style="color: #aaa; font-size: 12px; margin-top: -15px;">Özel ses çalmak için sohbete /ses <link> yazın.</p>
-            <input type="text" id="username" placeholder="Karakter Adın" maxlength="15">
+            <h1 style="color:#00fff5; margin-top:0;">V3.0</h1>
+            <input type="text" id="username" placeholder="Kod Adın" maxlength="15">
             <select id="colorSelect">
-                <option value="#00d2ff">Buz Mavisi</option>
-                <option value="#ff004c">Neon Kırmızı</option>
-                <option value="#39ff14">Zehir Yeşili</option>
-                <option value="#f9a826">Güneş Turuncusu</option>
-                <option value="#a200ff">Galaksi Moru</option>
+                <option value="#00fff5">Neon Mavi</option>
+                <option value="#ff004c">Lazer Kırmızı</option>
+                <option value="#39ff14">Ajan Yeşili</option>
+                <option value="#f9a826">Uyarı Turuncusu</option>
             </select>
-            <button class="btn" onclick="joinGame()">Evrene Katıl</button>
+            <button onclick="joinGame()">Bağlan</button>
         </div>
     </div>
 
-    <!-- OYUN ALANI -->
+    <!-- OYUN -->
     <div id="gameArea">
         <canvas id="gameCanvas"></canvas>
-        
         <div id="chatLogBox"></div>
+        <div id="minimap"><canvas id="radarCanvas" width="200" height="200"></canvas></div>
         
-        <div id="inputArea">
-            <input type="text" id="chatInput" placeholder="Sohbet et veya komut gir (/ses URL)..." autocomplete="off">
+        <div id="actionPrompt">VENT İÇİN [E]'YE BAS</div>
+        
+        <div id="ventUI">
+            <button class="v-btn" onclick="socket.emit('switchVent', 'prev')">◀ ÖNCEKİ</button>
+            <button class="v-btn" style="background:#ff004c;" onclick="socket.emit('interactVent')">ÇIKIŞ YAP</button>
+            <button class="v-btn" onclick="socket.emit('switchVent', 'next')">SONRAKİ ▶</button>
         </div>
 
-        <!-- MOBİL D-PAD -->
-        <div id="mobileControls" style="display: none;">
-            <div class="d-btn" id="btn-up">▲</div>
-            <div class="d-btn" id="btn-left">◀</div>
-            <div class="d-btn" id="btn-right">▶</div>
-            <div class="d-btn" id="btn-down">▼</div>
+        <div id="inputArea">
+            <input type="text" id="chatInput" placeholder="Mesaj veya komut (/ses url)..." autocomplete="off">
+        </div>
+
+        <div id="controlsInfo">
+            WASD: Hareket | SHIFT: Depar<br>
+            E: Vent Etkileşimi<br>
+            1,2,3,4: Emotelar (😁, 😡, 🥶, 💀)
         </div>
     </div>
 
@@ -91,212 +99,231 @@
     const socket = io();
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
+    const radarCanvas = document.getElementById("radarCanvas");
+    const radarCtx = radarCanvas.getContext("2d");
     const chatInput = document.getElementById("chatInput");
-    const chatLogBox = document.getElementById("chatLogBox");
 
     let gameState = null;
     let myId = null;
     let camera = { x: 0, y: 0 };
     const keys = {};
-    
-    // Görsel Efektler (Parçacıklar ve Oyuncu İzleri)
-    const particles = [];
-    const playerTrails = {};
 
-    // Gömülü Ses Efektleri (Telifsiz genel URL'ler)
+    // Sesler
     const sfx = {
-        msg: new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3'),
-        join: new Audio('https://www.soundjay.com/buttons/sounds/button-10.mp3'),
-        leave: new Audio('https://www.soundjay.com/buttons/sounds/button-04.mp3')
+        msg: new Audio('https://assets.mixkit.co/active_storage/sfx/238/238-preview.mp3'),
+        join: new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'),
+        leave: new Audio('https://assets.mixkit.co/active_storage/sfx/2870/2870-preview.mp3'),
+        vent: new Audio('https://assets.mixkit.co/active_storage/sfx/3218/3218-preview.mp3') // Metalik kapak sesi
     };
-    Object.values(sfx).forEach(audio => audio.volume = 0.3); // Ses seviyesini kıs
+    let audioUnlocked = false;
 
-    // Boyutlandırma
-    function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        // Mobildeyse D-Pad'i göster
-        document.getElementById('mobileControls').style.display = window.innerWidth <= 768 ? 'grid' : 'none';
+    function initAudio() {
+        if (audioUnlocked) return;
+        // Tüm sesleri 0 ses seviyesinde çalıp durdurarak tarayıcı kilidini açıyoruz
+        Object.values(sfx).forEach(a => { a.volume = 0; a.play().then(() => { a.pause(); a.currentTime = 0; a.volume = 0.4; }); });
+        audioUnlocked = true;
+        document.getElementById('startScreen').style.display = 'none';
+        document.getElementById('menuUI').style.display = 'flex';
     }
-    window.addEventListener('resize', resize);
-    resize();
 
-    // Arka plan parçacıklarını oluştur
-    for(let i=0; i<150; i++) {
-        particles.push({
-            x: Math.random() * 2000, y: Math.random() * 2000,
-            size: Math.random() * 2, speed: Math.random() * 0.5
-        });
-    }
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
 
     function joinGame() {
-        const name = document.getElementById("username").value.trim() || "Oyuncu";
+        const name = document.getElementById("username").value.trim() || "Ajan";
         const color = document.getElementById("colorSelect").value;
-        
         socket.emit("joinGame", { name, color });
-        
-        document.getElementById("menuUI").style.opacity = "0";
-        setTimeout(() => {
-            document.getElementById("menuUI").style.display = "none";
-            document.getElementById("gameArea").style.display = "block";
-        }, 500);
-
+        document.getElementById("menuUI").style.display = "none";
+        document.getElementById("gameArea").style.display = "block";
         requestAnimationFrame(gameLoop);
     }
 
-    // Soket Dinleyicileri
     socket.on("connect", () => { myId = socket.id; });
     socket.on("gameState", (state) => { gameState = state; });
-    
-    // Ses Çalma Emirleri
-    socket.on("playSound", (type) => { if(sfx[type]) sfx[type].play().catch(e=>console.log(e)); });
-    socket.on("playCustomSound", (url) => { 
-        try { 
-            let customAudio = new Audio(url); 
-            customAudio.volume = 0.5;
-            customAudio.play(); 
-        } catch(e) { console.log("Ses çalınamadı:", e); } 
-    });
+    socket.on("playSound", (t) => { if(sfx[t]) { sfx[t].currentTime=0; sfx[t].play().catch(e=>console.log(e)); } });
+    socket.on("playCustomSound", (url) => { try { let a = new Audio(url); a.volume = 0.6; a.play(); } catch(e){} });
 
-    // Sohbet Günlüğü Güncellemesi
     socket.on("newChatMessage", (data) => {
-        const div = document.createElement("div");
-        div.className = "log-msg";
-        div.innerHTML = `<span style="color:${data.color}; font-weight:bold;">${data.name}:</span> ${data.text}`;
-        chatLogBox.appendChild(div);
-        chatLogBox.scrollTop = chatLogBox.scrollHeight; // Otomatik aşağı kaydır
-    });
-    socket.on("serverMessage", (msg) => {
-        const div = document.createElement("div"); div.className = "sys-msg"; div.innerText = msg;
-        chatLogBox.appendChild(div);
-        chatLogBox.scrollTop = chatLogBox.scrollHeight;
+        const div = document.createElement("div"); div.className = "log-msg";
+        div.innerHTML = `<span style="color:${data.color};">${data.name}:</span> ${data.text}`;
+        document.getElementById("chatLogBox").appendChild(div);
+        document.getElementById("chatLogBox").scrollTop = document.getElementById("chatLogBox").scrollHeight;
     });
 
-    // Klavye Kontrolleri
+    // Kontroller
     window.addEventListener("keydown", (e) => {
         if (document.activeElement === chatInput) { 
-            if (e.key === "Enter") sendMsg();
-            socket.emit('typing', true);
+            if (e.key === "Enter") {
+                if(chatInput.value.trim()!="") socket.emit("chat", chatInput.value);
+                chatInput.value = ""; socket.emit('typing', false);
+            } else { socket.emit('typing', true); }
             return; 
         }
         keys[e.key.toLowerCase()] = true;
+
+        // Özel Tuşlar
+        if (e.key.toLowerCase() === 'e') socket.emit('interactVent');
+        if (e.key === '1') socket.emit('emote', '😁');
+        if (e.key === '2') socket.emit('emote', '😡');
+        if (e.key === '3') socket.emit('emote', '🥶');
+        if (e.key === '4') socket.emit('emote', '💀');
     });
+    
     window.addEventListener("keyup", (e) => {
-        if (document.activeElement === chatInput) { socket.emit('typing', false); return; }
+        if (document.activeElement === chatInput) { setTimeout(()=>socket.emit('typing',false), 2000); return; }
         delete keys[e.key.toLowerCase()];
     });
 
-    // Mobil Dokunmatik Kontroller
-    function setupMobileButton(id, dir) {
-        const btn = document.getElementById(id);
-        btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[dir] = true; });
-        btn.addEventListener('touchend', (e) => { e.preventDefault(); delete keys[dir]; });
-    }
-    setupMobileButton('btn-up', 'w');
-    setupMobileButton('btn-down', 's');
-    setupMobileButton('btn-left', 'a');
-    setupMobileButton('btn-right', 'd');
-
-    // Hareket Döngüsü
     setInterval(() => {
         if (document.activeElement === chatInput) return;
-        if (keys["w"] || keys["arrowup"]) socket.emit("move", "UP");
-        if (keys["s"] || keys["arrowdown"]) socket.emit("move", "DOWN");
-        if (keys["a"] || keys["arrowleft"]) socket.emit("move", "LEFT");
-        if (keys["d"] || keys["arrowright"]) socket.emit("move", "RIGHT");
-    }, 30);
+        let sprint = keys["shift"];
+        if (keys["w"]) socket.emit("move", { dir: "UP", sprint });
+        if (keys["s"]) socket.emit("move", { dir: "DOWN", sprint });
+        if (keys["a"]) socket.emit("move", { dir: "LEFT", sprint });
+        if (keys["d"]) socket.emit("move", { dir: "RIGHT", sprint });
+    }, 1000/30);
 
-    function sendMsg() {
-        if (chatInput.value.trim() !== "") { 
-            socket.emit("chat", chatInput.value); 
-            chatInput.value = ""; 
-            socket.emit('typing', false);
-        }
-    }
-
-    // --- KAMERA VE ÇİZİM MOTORU ---
+    // ÇİZİM MOTORU
     function gameLoop() {
-        ctx.fillStyle = "#0a0a12";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
         if (!gameState || !gameState.players[myId]) { requestAnimationFrame(gameLoop); return; }
-
         let me = gameState.players[myId];
-        
-        // Kamera Takibi (Yumuşak Geçiş)
-        camera.x += (me.x - canvas.width / 2 - camera.x) * 0.1;
-        camera.y += (me.y - canvas.height / 2 - camera.y) * 0.1;
 
+        // Kamera
+        camera.x += (me.x - canvas.width / 2 - camera.x) * 0.15;
+        camera.y += (me.y - canvas.height / 2 - camera.y) * 0.15;
+
+        // Zemin
+        ctx.fillStyle = "#111"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
         ctx.save();
         ctx.translate(-camera.x, -camera.y);
 
-        // Arka Plan Izgarası ve Parçacıklar
-        ctx.strokeStyle = "rgba(255,255,255,0.03)";
-        ctx.lineWidth = 2;
+        // Grid (Fayanslar)
+        ctx.strokeStyle = "#1a1a1a"; ctx.lineWidth = 2;
         for (let x = 0; x <= gameState.map.width; x += 100) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, gameState.map.height); ctx.stroke(); }
         for (let y = 0; y <= gameState.map.height; y += 100) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(gameState.map.width, y); ctx.stroke(); }
 
-        ctx.fillStyle = "rgba(255,255,255,0.5)";
-        particles.forEach(p => {
-            p.y -= p.speed;
-            if(p.y < 0) p.y = gameState.map.height;
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+        // Ventleri Çiz
+        let canVent = false;
+        ctx.fillStyle = "#444";
+        ctx.strokeStyle = "#888";
+        gameState.vents.forEach(v => {
+            ctx.fillRect(v.x - 30, v.y - 30, 60, 60);
+            ctx.strokeRect(v.x - 30, v.y - 30, 60, 60);
+            // Izgara çizgileri
+            for(let i=-20; i<=20; i+=10) { ctx.beginPath(); ctx.moveTo(v.x-25, v.y+i); ctx.lineTo(v.x+25, v.y+i); ctx.stroke(); }
+            
+            if(Math.hypot(me.x - v.x, me.y - v.y) < 80) canVent = true;
         });
+
+        // UI Güncellemeleri
+        document.getElementById("actionPrompt").style.display = (canVent && !me.isVenting) ? "block" : "none";
+        document.getElementById("ventUI").style.display = me.isVenting ? "flex" : "none";
+
+        // Duvarları Çiz
+        ctx.fillStyle = "#0f172a";
+        ctx.shadowBlur = 15; ctx.shadowColor = "#38bdf8";
+        gameState.walls.forEach(w => {
+            ctx.fillRect(w.x, w.y, w.w, w.h);
+            ctx.strokeStyle = "#38bdf8"; ctx.strokeRect(w.x, w.y, w.w, w.h);
+        });
+        ctx.shadowBlur = 0;
 
         // Oyuncuları Çiz
         for (let id in gameState.players) {
             let p = gameState.players[id];
             
-            // Oyuncu İzi (Trail) Efekti
-            if (!playerTrails[id]) playerTrails[id] = [];
-            playerTrails[id].push({x: p.x, y: p.y, alpha: 1});
-            if (playerTrails[id].length > 10) playerTrails[id].shift();
+            // Eğer oyuncu ventteyse ve ben değilsem onu görmem
+            if (p.isVenting && id !== myId) continue;
+            
+            // Eğer ben ventteysem ve adam ventte değilse onu karanlık gör
+            ctx.globalAlpha = (me.isVenting && !p.isVenting) ? 0.3 : 1;
 
-            for(let i=0; i<playerTrails[id].length; i++) {
-                let trail = playerTrails[id][i];
-                ctx.beginPath(); ctx.arc(trail.x, trail.y, 20 * (i/10), 0, Math.PI*2);
-                ctx.fillStyle = p.color; ctx.globalAlpha = (i/10) * 0.3;
-                ctx.fill();
-            }
-            ctx.globalAlpha = 1.0; // Saydamlığı sıfırla
-
-            // Oyuncu Dairesi
+            // Oyuncu Gövdesi
             ctx.beginPath(); ctx.arc(p.x, p.y, 25, 0, Math.PI * 2);
             ctx.fillStyle = p.color; ctx.fill(); 
-            ctx.shadowBlur = 25; ctx.shadowColor = p.color; ctx.fill(); ctx.shadowBlur = 0;
             
-            // İç tasarım (Cam efekti)
-            ctx.beginPath(); ctx.arc(p.x - 5, p.y - 5, 8, 0, Math.PI * 2);
-            ctx.fillStyle = "rgba(255,255,255,0.4)"; ctx.fill();
+            // Sırt çantası (Among Us detayı)
+            ctx.fillRect(p.x - 35, p.y - 15, 15, 30);
+            
+            // Gözlük camı
+            ctx.fillStyle = "#94a3b8";
+            ctx.beginPath(); ctx.ellipse(p.x + 10, p.y, 10, 15, 0, 0, Math.PI*2); ctx.fill();
 
-            // İsim Etiketi
-            ctx.fillStyle = "white"; ctx.font = "bold 14px Poppins"; ctx.textAlign = "center";
+            // İsim ve Emote
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = "white"; ctx.font = "bold 14px Chakra Petch"; ctx.textAlign = "center";
             ctx.fillText(p.name, p.x, p.y + 45);
 
-            // "Yazıyor..." Göstergesi
-            if (p.isTyping && !p.msg) {
-                ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.font = "italic 12px Poppins";
-                ctx.fillText("yazıyor...", p.x, p.y - 35);
-            }
+            if(p.emote) { ctx.font = "30px sans-serif"; ctx.fillText(p.emote, p.x, p.y - 40); }
+            if(p.isTyping && !p.msg) { ctx.font = "12px sans-serif"; ctx.fillText("yazıyor...", p.x, p.y - 35); }
 
             // Mesaj Balonu
             if (p.msg) {
-                ctx.font = "14px Poppins";
-                let msgWidth = ctx.measureText(p.msg).width + 30;
-                
-                // Balon Arkaplanı
+                ctx.font = "14px sans-serif";
+                let w = ctx.measureText(p.msg).width + 20;
                 ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-                ctx.beginPath(); ctx.roundRect(p.x - msgWidth/2, p.y - 75, msgWidth, 35, 10); ctx.fill();
-                
-                // Balon Ok Ucu
-                ctx.beginPath(); ctx.moveTo(p.x - 10, p.y - 40); ctx.lineTo(p.x + 10, p.y - 40); ctx.lineTo(p.x, p.y - 30); ctx.fill();
-                
-                // Yazı
-                ctx.fillStyle = "black"; ctx.fillText(p.msg, p.x, p.y - 53);
+                ctx.beginPath(); ctx.roundRect(p.x - w/2, p.y - 80, w, 35, 10); ctx.fill();
+                ctx.fillStyle = "black"; ctx.fillText(p.msg, p.x, p.y - 57);
+                // Ok ucu
+                ctx.beginPath(); ctx.moveTo(p.x-5, p.y-45); ctx.lineTo(p.x+5, p.y-45); ctx.lineTo(p.x, p.y-35); ctx.fill();
             }
         }
-
         ctx.restore();
+
+        // --- GÖRÜŞ AÇISI (KARANLIK / FOG OF WAR) ---
+        // Tüm ekranı siyaha boyayıp, oyuncunun etrafını (ve ventleri) deliyoruz.
+        ctx.fillStyle = "rgba(0, 0, 0, 0.93)"; // Karanlık seviyesi
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.globalCompositeOperation = 'destination-out';
+        
+        // Kendi etrafımdaki ışık
+        let grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 50, canvas.width/2, canvas.height/2, me.isVenting ? 500 : 300);
+        grad.addColorStop(0, "rgba(0,0,0,1)");
+        grad.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath(); ctx.arc(canvas.width/2, canvas.height/2, me.isVenting ? 500 : 300, 0, Math.PI*2); ctx.fill();
+
+        // Ventlerin etrafındaki ufak ışıklar
+        gameState.vents.forEach(v => {
+            let screenX = v.x - camera.x; let screenY = v.y - camera.y;
+            let vGrad = ctx.createRadialGradient(screenX, screenY, 10, screenX, screenY, 100);
+            vGrad.addColorStop(0, "rgba(0,0,0,0.8)"); vGrad.addColorStop(1, "rgba(0,0,0,0)");
+            ctx.fillStyle = vGrad; ctx.beginPath(); ctx.arc(screenX, screenY, 100, 0, Math.PI*2); ctx.fill();
+        });
+        
+        ctx.globalCompositeOperation = 'source-over';
+
+        // --- MİNİMAP (RADAR) ÇİZİMİ ---
+        radarCtx.clearRect(0, 0, 200, 200);
+        radarCtx.fillStyle = "rgba(0,50,0,1)"; radarCtx.fillRect(0,0,200,200);
+        
+        // Radar çizgileri
+        radarCtx.strokeStyle = "rgba(0,255,0,0.3)";
+        radarCtx.beginPath(); radarCtx.arc(100,100, 50, 0, Math.PI*2); radarCtx.stroke();
+        radarCtx.beginPath(); radarCtx.moveTo(100,0); radarCtx.lineTo(100,200); radarCtx.stroke();
+        radarCtx.beginPath(); radarCtx.moveTo(0,100); radarCtx.lineTo(200,100); radarCtx.stroke();
+        
+        let scaleX = 200 / gameState.map.width;
+        let scaleY = 200 / gameState.map.height;
+
+        // Duvarları Radarda Göster
+        radarCtx.fillStyle = "rgba(0,255,0,0.4)";
+        gameState.walls.forEach(w => radarCtx.fillRect(w.x*scaleX, w.y*scaleY, w.w*scaleX, w.h*scaleY));
+        
+        // Ventleri Radarda Göster (Mavi noktalar)
+        radarCtx.fillStyle = "#00fff5";
+        gameState.vents.forEach(v => { radarCtx.beginPath(); radarCtx.arc(v.x*scaleX, v.y*scaleY, 3, 0, Math.PI*2); radarCtx.fill(); });
+
+        // Kendini ve Diğerlerini Radarda Göster
+        for (let id in gameState.players) {
+            let p = gameState.players[id];
+            if (p.isVenting && id !== myId) continue;
+            radarCtx.fillStyle = (id === myId) ? "#fff" : "#ff004c";
+            radarCtx.beginPath(); radarCtx.arc(p.x*scaleX, p.y*scaleY, 4, 0, Math.PI*2); radarCtx.fill();
+        }
+
         requestAnimationFrame(gameLoop);
     }
 </script>
