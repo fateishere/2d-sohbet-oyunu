@@ -3,47 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Siber Evren - Vent & Voice</title>
+    <title>Siber Evren V2 - Yüksek Kalite</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
         
-        body { margin: 0; background: #050508; color: #fff; font-family: 'Rajdhani', sans-serif; overflow: hidden; touch-action: none; user-select: none; }
+        body { margin: 0; background: #020204; color: #fff; font-family: 'Orbitron', sans-serif; overflow: hidden; touch-action: none; user-select: none; }
         
-        /* GENİŞLETİLMİŞ MENÜ */
-        #menuUI { position: fixed; width: 100vw; height: 100vh; background: radial-gradient(circle at center, #0f172a 0%, #000000 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; transition: opacity 0.5s; }
-        .box { background: rgba(15, 23, 42, 0.6); padding: 40px; border-radius: 20px; border: 1px solid rgba(0, 255, 245, 0.3); backdrop-filter: blur(15px); text-align: center; box-shadow: 0 0 50px rgba(0,255,245,0.1); width: 90%; max-width: 450px; }
-        h1 { font-weight: 700; font-size: 3rem; margin-bottom: 5px; color: #00fff5; text-shadow: 0 0 20px rgba(0,255,245,0.5); letter-spacing: 2px; }
-        .menu-row { display: flex; gap: 15px; margin-bottom: 20px; }
-        input, select { padding: 15px; width: 100%; background: rgba(0,0,0,0.5); border: 1px solid #334155; color: white; border-radius: 10px; font-family: 'Rajdhani'; font-size: 18px; outline: none; }
-        input:focus, select:focus { border-color: #00fff5; box-shadow: 0 0 10px rgba(0,255,245,0.3); }
-        .btn { padding: 15px; width: 100%; background: #00fff5; color: #000; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; font-size: 20px; text-transform: uppercase; box-shadow: 0 0 15px rgba(0,255,245,0.4); transition: 0.2s; }
-        .btn:hover { background: #fff; box-shadow: 0 0 25px #fff; transform: scale(1.02); }
-        .info-text { font-size: 14px; color: #94a3b8; margin-top: 15px; line-height: 1.5; }
+        /* ULTRA GELİŞMİŞ ANA MENÜ */
+        #menuUI { position: fixed; width: 100vw; height: 100vh; background: url('https://www.transparenttextures.com/patterns/stardust.png'), radial-gradient(circle at center, #0a0a1a 0%, #000 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; transition: opacity 0.8s; }
+        
+        .box { background: rgba(10, 15, 30, 0.85); padding: 50px; border-radius: 20px; border: 2px solid rgba(0, 255, 245, 0.4); backdrop-filter: blur(20px); text-align: center; box-shadow: 0 0 80px rgba(0,255,245,0.15), inset 0 0 20px rgba(0,255,245,0.1); width: 90%; max-width: 500px; position: relative; overflow: hidden; }
+        
+        .box::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(0,255,245,0.1), transparent); transform: rotate(45deg); animation: shine 6s infinite; pointer-events: none; }
+        
+        @keyframes shine { 0% { transform: translateX(-100%) rotate(45deg); } 100% { transform: translateX(100%) rotate(45deg); } }
+
+        h1 { font-weight: 900; font-size: 3.5rem; margin-bottom: 5px; color: #fff; text-shadow: 0 0 10px #00fff5, 0 0 20px #00fff5, 0 0 40px #00fff5; letter-spacing: 3px; text-transform: uppercase; }
+        
+        /* DATA STATS KISMI */
+        #statsBox { background: rgba(0,0,0,0.5); padding: 10px; border-radius: 10px; margin-bottom: 20px; font-size: 12px; color: #00fff5; border: 1px solid rgba(0,255,245,0.2); }
+
+        .menu-row { display: flex; gap: 15px; margin-bottom: 25px; }
+        input, select { padding: 15px; width: 100%; background: rgba(0,0,0,0.6); border: 2px solid #1e293b; color: white; border-radius: 12px; font-family: 'Orbitron'; font-size: 16px; outline: none; transition: 0.3s; }
+        input:focus, select:focus { border-color: #00fff5; box-shadow: 0 0 15px rgba(0,255,245,0.4); background: rgba(0,255,245,0.05); }
+        
+        .btn { padding: 18px; width: 100%; background: linear-gradient(90deg, #00fff5, #0088ff); color: #000; font-weight: 900; border: none; border-radius: 12px; cursor: pointer; font-size: 20px; text-transform: uppercase; box-shadow: 0 0 20px rgba(0,255,245,0.4); transition: 0.3s; position: relative; overflow: hidden; }
+        .btn:hover { box-shadow: 0 0 40px #00fff5; transform: scale(1.03); letter-spacing: 2px; }
 
         #gameArea { display: none; width: 100vw; height: 100vh; position: relative; }
         canvas { display: block; }
         
-        /* ARAYÜZ ELEMANLARI */
-        #chatLogBox { position: absolute; top: 20px; left: 20px; width: 300px; height: 250px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; pointer-events: none; z-index: 10; font-size: 16px; backdrop-filter: blur(5px); }
-        .log-msg { background: rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; word-wrap: break-word; }
+        #chatLogBox { position: absolute; top: 20px; left: 20px; width: 320px; height: 250px; background: rgba(5,5,15,0.7); border: 1px solid rgba(0,255,245,0.2); border-radius: 15px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; pointer-events: none; z-index: 10; font-size: 14px; backdrop-filter: blur(10px); }
+        .log-msg { background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 8px; border-left: 3px solid #00fff5; }
 
-        #inputArea { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; z-index: 10; }
-        #chatInput { margin: 0; width: 100%; border-radius: 20px; border: 2px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.8); }
+        #inputArea { position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; z-index: 10; }
+        #chatInput { margin: 0; width: 100%; border-radius: 25px; border: 2px solid rgba(0,255,245,0.3); background: rgba(0,0,0,0.85); padding: 15px 25px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
 
-        /* MOBİL VE PC KONTROLLER (Vent, Mikrofon, Joystick) */
-        #actionContainer { position: absolute; bottom: 20px; right: 20px; display: flex; gap: 15px; z-index: 20; }
-        .action-btn { width: 60px; height: 60px; border-radius: 50%; background: rgba(15,23,42,0.8); border: 2px solid #00fff5; color: #00fff5; font-size: 14px; font-weight: bold; font-family: 'Rajdhani'; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 15px rgba(0,255,245,0.3); }
-        .action-btn.active { background: #00fff5; color: #000; }
-        #ventMenu { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.9); padding: 30px; border: 2px solid #ff0055; border-radius: 15px; z-index: 50; text-align: center; }
+        #actionContainer { position: absolute; bottom: 25px; right: 25px; display: flex; gap: 15px; z-index: 20; }
+        .action-btn { width: 65px; height: 65px; border-radius: 50%; background: rgba(10,15,30,0.9); border: 2px solid #00fff5; color: #00fff5; font-size: 14px; font-weight: bold; font-family: 'Orbitron'; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px rgba(0,255,245,0.2); transition: 0.2s; }
+        .action-btn.active { background: #00fff5; color: #000; box-shadow: 0 0 30px #00fff5; transform: scale(1.1); }
         
-        /* SANAL JOYSTICK (Mobilde kaymak gibi hareket) */
-        #joystickZone { position: absolute; bottom: 20px; left: 20px; width: 150px; height: 150px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 50%; z-index: 20; display: none; }
-        #joystickKnob { position: absolute; top: 50px; left: 50px; width: 50px; height: 50px; background: rgba(0,255,245,0.5); border-radius: 50%; pointer-events: none; transition: 0.1s ease-out; }
+        /* GELİŞMİŞ VENT MENÜSÜ */
+        #ventMenu { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(10,5,20,0.95); padding: 40px; border: 2px solid #ff0055; border-radius: 20px; z-index: 50; text-align: center; box-shadow: 0 0 50px rgba(255,0,85,0.4); backdrop-filter: blur(15px); width: 80%; max-width: 600px; }
+        .vent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
+        .vent-btn { background: rgba(255,0,85,0.1); border: 1px solid #ff0055; color: #fff; padding: 15px; border-radius: 10px; cursor: pointer; font-family: 'Orbitron'; transition: 0.3s; }
+        .vent-btn:hover { background: #ff0055; color: #000; box-shadow: 0 0 20px #ff0055; }
+
+        #joystickZone { position: absolute; bottom: 25px; left: 25px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); border: 2px solid rgba(0,255,245,0.2); border-radius: 50%; z-index: 20; display: none; }
+        #joystickKnob { position: absolute; top: 50px; left: 50px; width: 50px; height: 50px; background: #00fff5; border-radius: 50%; pointer-events: none; box-shadow: 0 0 20px #00fff5; }
 
         @media (max-width: 768px) {
             #joystickZone { display: block; }
-            #chatLogBox { width: 200px; height: 150px; font-size: 14px; top: 10px; left: 10px; }
-            #inputArea { bottom: 180px; } /* Klavyeden kaçmak için yukarı al */
+            #chatLogBox { width: 220px; height: 150px; font-size: 12px; }
+            #inputArea { bottom: 200px; } 
         }
     </style>
     <script src="/socket.io/socket.io.js"></script>
@@ -52,8 +64,12 @@
 
     <div id="menuUI">
         <div class="box">
-            <h1>SİBER EVREN</h1>
-            <p class="info-text">Mikrofon izni istenecek, sesli sohbet için [V] basılı tut.</p>
+            <h1>SİBER AĞ</h1>
+            
+            <div id="statsBox">
+                Veriler Yükleniyor...
+            </div>
+
             <input type="text" id="username" placeholder="Sörfçü Adın" maxlength="15">
             <div class="menu-row">
                 <select id="colorSelect">
@@ -61,38 +77,34 @@
                     <option value="#ff0055">Kızıl Öfke</option>
                     <option value="#39ff14">Zehir Matrisi</option>
                     <option value="#ffaa00">Güneş Çekirdeği</option>
+                    <option value="#bf00ff">Hiper Uzay</option>
                 </select>
                 <select id="modelSelect">
-                    <option value="drone">Delta Drone</option>
-                    <option value="orb">Plazma Küresi</option>
-                    <option value="hexa">Hexa Tank</option>
+                    <option value="drone">Otonom Drone (Akıcı)</option>
+                    <option value="fighter">Yıldız Avcısı (Aerodinamik)</option>
+                    <option value="orb">Plazma Küresi (Enerji)</option>
                 </select>
             </div>
-            <button class="btn" onclick="joinGame()">BAĞLANTIYI BAŞLAT</button>
+            <button class="btn" onclick="joinGame()">AĞA BAĞLAN</button>
         </div>
     </div>
 
     <div id="gameArea">
         <canvas id="gameCanvas"></canvas>
         <div id="chatLogBox"></div>
-        <div id="inputArea"><input type="text" id="chatInput" placeholder="Mesaj..." autocomplete="off"></div>
+        <div id="inputArea"><input type="text" id="chatInput" placeholder="Sisteme mesaj gönder..." autocomplete="off"></div>
         
         <div id="joystickZone"><div id="joystickKnob"></div></div>
         
         <div id="actionContainer">
-            <div id="ventBtn" class="action-btn" onclick="interactVent()" style="display:none; border-color: #ff0055; color: #ff0055;">VENT (E)</div>
-            <div id="micBtn" class="action-btn">MIC (V)</div>
+            <div id="ventBtn" class="action-btn" onclick="interactVent()" style="display:none; border-color: #ff0055; color: #ff0055;">VENT<br>(E)</div>
+            <div id="micBtn" class="action-btn">MIC<br>(V)</div>
         </div>
 
         <div id="ventMenu">
-            <h2 style="color: #ff0055; margin-top:0;">HAVALANDIRMA AĞI</h2>
-            <div style="display: flex; gap:10px; flex-wrap: wrap; justify-content: center; width: 200px;">
-                <button class="btn" style="background:#ff0055;" onclick="travelVent(1)">KuzeyBatı (1)</button>
-                <button class="btn" style="background:#ff0055;" onclick="travelVent(2)">KuzeyDoğu (2)</button>
-                <button class="btn" style="background:#ff0055;" onclick="travelVent(3)">Merkez (3)</button>
-                <button class="btn" style="background:#ff0055;" onclick="travelVent(4)">GüneyBatı (4)</button>
-                <button class="btn" style="background:#ff0055;" onclick="travelVent(5)">GüneyDoğu (5)</button>
-            </div>
+            <h2 style="color: #ff0055; margin-top:0; font-weight:900; letter-spacing:2px;">HIZLI SEYAHAT AĞI</h2>
+            <p style="color:#aaa; font-size:14px;">Hedef reaktörü seçin.</p>
+            <div class="vent-grid" id="ventGrid"></div>
         </div>
     </div>
 
@@ -105,56 +117,138 @@
     let gameState = null;
     let myId = null;
     let camera = { x: 0, y: 0 };
-    let rotAngle = 0; // Modellerin sürekli dönmesi için
+    let rotAngle = 0; 
     let moveVector = { x: 0, y: 0 };
+    let trailData = {}; // Gelişmiş motor izi sistemi
+    let particles = []; // Vent efektleri için
 
-    // SESLİ SOHBET (Voice Chat) KURULUMU
+    // DATA SİSTEMİ (LocalStorage)
+    let userData = {
+        name: "", color: "#00fff5", model: "drone", jumps: 0, logins: 0
+    };
+
+    function loadData() {
+        if(localStorage.getItem('siberEvrenData')) {
+            userData = JSON.parse(localStorage.getItem('siberEvrenData'));
+            document.getElementById("username").value = userData.name;
+            document.getElementById("colorSelect").value = userData.color;
+            document.getElementById("modelSelect").value = userData.model;
+        }
+        document.getElementById("statsBox").innerHTML = `
+            Hoş Geldin <b>${userData.name || 'Gezgin'}</b> | 
+            Girişler: <b>${userData.logins}</b> | 
+            Vent Sıçramaları: <b>${userData.jumps}</b>
+        `;
+    }
+    
+    function saveData() {
+        userData.name = document.getElementById("username").value;
+        userData.color = document.getElementById("colorSelect").value;
+        userData.model = document.getElementById("modelSelect").value;
+        localStorage.setItem('siberEvrenData', JSON.stringify(userData));
+    }
+    
+    loadData();
+
+    // OPTİMİZE EDİLMİŞ MIC SİSTEMİ
     let mediaRecorder;
     let isRecording = false;
 
     async function initVoiceChat() {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
+            // Yankı önleyici (echoCancellation) ve gürültü engelleyici eklendi
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+            mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
             
             mediaRecorder.ondataavailable = (e) => {
                 if (e.data.size > 0) socket.emit('voiceStream', e.data);
             };
         } catch (err) {
-            console.log("Mikrofon izni verilmedi veya desteklenmiyor.", err);
+            console.log("Mikrofon hatası:", err);
         }
     }
 
-    // Bas-Konuş Mantığı
-    function startVoice() { if(mediaRecorder && mediaRecorder.state === 'inactive') { mediaRecorder.start(100); isRecording = true; document.getElementById('micBtn').classList.add('active'); } }
-    function stopVoice() { if(mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); isRecording = false; document.getElementById('micBtn').classList.remove('active'); } }
+    function startVoice() { 
+        if(mediaRecorder && mediaRecorder.state === 'inactive') { 
+            mediaRecorder.start(200); // 200ms chunk'lar halinde kesintisiz akış
+            isRecording = true; 
+            document.getElementById('micBtn').classList.add('active'); 
+        } 
+    }
+    function stopVoice() { 
+        if(mediaRecorder && mediaRecorder.state === 'recording') { 
+            mediaRecorder.stop(); 
+            isRecording = false; 
+            document.getElementById('micBtn').classList.remove('active'); 
+        } 
+    }
 
-    socket.on('voiceStream', (data) => {
-        // Gelen sesi Web Audio ile anında çal
+    // Gelen sesleri kuyruğa alarak çalma (Takılmaları önler)
+    let audioQueue = [];
+    let isPlayingAudio = false;
+
+    socket.on('voiceStream', async (data) => {
         const blob = new Blob([data.audio], { type: 'audio/webm;codecs=opus' });
         const audioUrl = URL.createObjectURL(blob);
         const audio = new Audio(audioUrl);
-        audio.play().catch(e => console.log(e));
+        
+        audioQueue.push(audio);
+        if(!isPlayingAudio) playNextAudio();
     });
+
+    function playNextAudio() {
+        if(audioQueue.length === 0) { isPlayingAudio = false; return; }
+        isPlayingAudio = true;
+        let audio = audioQueue.shift();
+        audio.play().catch(e => console.log(e));
+        audio.onended = () => { playNextAudio(); };
+    }
 
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener('resize', resize); resize();
 
     function joinGame() {
-        initVoiceChat(); // Mikrofonu aktifleştir
+        initVoiceChat();
+        userData.logins++;
+        saveData();
+
         socket.emit("joinGame", { 
-            name: document.getElementById("username").value.trim() || "Oyuncu", 
-            color: document.getElementById("colorSelect").value,
-            modelType: document.getElementById("modelSelect").value
+            name: userData.name || "Oyuncu", 
+            color: userData.color,
+            modelType: userData.model
         });
         
         document.getElementById("menuUI").style.opacity = "0";
-        setTimeout(() => { document.getElementById("menuUI").style.display = "none"; document.getElementById("gameArea").style.display = "block"; }, 500);
+        setTimeout(() => { document.getElementById("menuUI").style.display = "none"; document.getElementById("gameArea").style.display = "block"; }, 800);
         requestAnimationFrame(gameLoop);
     }
 
     socket.on("connect", () => { myId = socket.id; });
-    socket.on("gameState", (state) => { gameState = state; checkVentDistance(); });
+    
+    socket.on("gameState", (state) => { 
+        gameState = state; 
+        checkVentDistance(); 
+        
+        // Dinamik Vent Menüsü Oluşturma
+        if(document.getElementById('ventGrid').innerHTML === "") {
+            let html = "";
+            state.map.vents.forEach(v => {
+                html += `<div class="vent-btn" onclick="travelVent(${v.id})">${v.name}</div>`;
+            });
+            document.getElementById('ventGrid').innerHTML = html;
+        }
+    });
+
+    // Görsel Vent Sıçrama Efekti (Işınlanma Partikülleri)
+    socket.on('ventEffect', (data) => {
+        for(let i=0; i<30; i++) {
+            particles.push({
+                x: data.x, y: data.y,
+                vx: (Math.random() - 0.5) * 15, vy: (Math.random() - 0.5) * 15,
+                life: 1, color: data.color
+            });
+        }
+    });
     
     socket.on("newChatMessage", (data) => {
         const div = document.createElement("div"); div.className = "log-msg";
@@ -162,7 +256,7 @@
         chatLogBox.appendChild(div); chatLogBox.scrollTop = chatLogBox.scrollHeight;
     });
 
-    // Vektörel Klavye Kontrolleri (Akıcı)
+    // Kontroller
     const keys = {};
     window.addEventListener("keydown", (e) => {
         if (document.activeElement === document.getElementById('chatInput')) return;
@@ -189,7 +283,6 @@
         if (keys["a"] || keys["arrowleft"]) moveVector.x = -1;
         if (keys["d"] || keys["arrowright"]) moveVector.x = 1;
         
-        // Çapraz gidişi normalize et (Hızlı çapraz gitmeyi engeller)
         if(moveVector.x !== 0 && moveVector.y !== 0) {
             let length = Math.sqrt(moveVector.x**2 + moveVector.y**2);
             moveVector.x /= length; moveVector.y /= length;
@@ -197,10 +290,10 @@
         socket.emit('move', moveVector);
     }
 
-    // SANAL JOYSTICK MANTIĞI
+    // Mobil Joystick (Akıcı)
     const joyZone = document.getElementById('joystickZone');
     const joyKnob = document.getElementById('joystickKnob');
-    let joyCenter = {x: 75, y: 75}; // zone div'in merkezi (150/2)
+    let joyCenter = {x: 75, y: 75};
     
     joyZone.addEventListener('touchstart', handleJoy);
     joyZone.addEventListener('touchmove', handleJoy);
@@ -220,25 +313,18 @@
         const dist = Math.hypot(dx, dy);
         const maxRadius = 50;
         
-        // Dışarı taşmayı engelle
-        if (dist > maxRadius) {
-            dx = (dx / dist) * maxRadius;
-            dy = (dy / dist) * maxRadius;
-        }
+        if (dist > maxRadius) { dx = (dx / dist) * maxRadius; dy = (dy / dist) * maxRadius; }
         
         joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
-        
-        // Değerleri -1 ile 1 arasına çekip sunucuya yolla
         moveVector = { x: dx / maxRadius, y: dy / maxRadius };
         socket.emit('move', moveVector);
     }
 
-    // Mobil Mic Butonu
     const micBtn = document.getElementById('micBtn');
     micBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startVoice(); });
     micBtn.addEventListener('touchend', (e) => { e.preventDefault(); stopVoice(); });
 
-    // VENT MANTIĞI
+    // Vent Mantığı
     function checkVentDistance() {
         if(!gameState || !gameState.players[myId]) return;
         let me = gameState.players[myId];
@@ -246,116 +332,213 @@
         let ventMenu = document.getElementById('ventMenu');
         
         if (me.inVent) {
-            ventBtn.style.display = 'flex';
-            ventBtn.innerText = 'ÇIK (E)';
+            ventBtn.style.display = 'flex'; ventBtn.innerHTML = 'ÇIK<br>(E)';
             ventMenu.style.display = 'block';
             return;
         } else {
             ventMenu.style.display = 'none';
         }
 
-        let nearVent = gameState.map.vents.some(v => Math.hypot(v.x - me.x, v.y - me.y) < 80);
+        let nearVent = gameState.map.vents.some(v => Math.hypot(v.x - me.x, v.y - me.y) < 100);
         if (nearVent) {
-            ventBtn.style.display = 'flex';
-            ventBtn.innerText = 'GİR (E)';
+            ventBtn.style.display = 'flex'; ventBtn.innerHTML = 'GİR<br>(E)';
         } else {
             ventBtn.style.display = 'none';
         }
     }
     
     function interactVent() { socket.emit('toggleVent'); }
-    function travelVent(id) { socket.emit('travelVent', id); }
+    function travelVent(id) { 
+        socket.emit('travelVent', id); 
+        userData.jumps++;
+        saveData(); // Veri kaydet
+    }
 
-    // ÇİZİM MOTORU (GELİŞMİŞ MODELLER)
-    function drawModel(x, y, color, type) {
+    // ULTRA GELİŞMİŞ ÇİZİM MOTORU
+    function drawAdvancedModel(p, id) {
+        let {x, y, color, modelType, vx, vy, isSpeaking} = p;
+        
+        // 1. Motor İzi (Trail) Çizimi
+        if(!trailData[id]) trailData[id] = [];
+        if(Math.abs(vx) > 0.1 || Math.abs(vy) > 0.1) {
+            trailData[id].push({x: x, y: y, life: 1});
+        }
+        
+        ctx.beginPath();
+        for(let i=0; i<trailData[id].length; i++) {
+            let t = trailData[id][i];
+            t.life -= 0.05;
+            if(t.life <= 0) { trailData[id].splice(i, 1); i--; continue; }
+            
+            ctx.globalAlpha = t.life * 0.5;
+            ctx.fillStyle = color;
+            ctx.arc(t.x, t.y, 8 * t.life, 0, Math.PI*2);
+            ctx.fill();
+        }
+        ctx.globalAlpha = 1.0;
+
+        // 2. Ana Model Çizimi
         ctx.save();
         ctx.translate(x, y);
         
-        // Ortak Parlama Efekti
-        ctx.shadowBlur = 20; ctx.shadowColor = color;
-        ctx.strokeStyle = color; ctx.lineWidth = 2;
+        // Hareket yönüne doğru eğilme (Rotation)
+        let moveAngle = Math.atan2(vy, vx);
+        let speed = Math.hypot(vx, vy);
+        
+        ctx.shadowBlur = 25; 
+        ctx.shadowColor = color;
+        ctx.lineJoin = "round";
 
-        if (type === 'drone') {
+        if (modelType === 'drone') {
             ctx.rotate(rotAngle);
-            // Dış üçgen (Dönüyor)
-            ctx.beginPath(); ctx.moveTo(0, -25); ctx.lineTo(22, 12); ctx.lineTo(-22, 12); ctx.closePath(); ctx.stroke();
-            // İç Çekirdek (Ters dönüyor)
+            ctx.strokeStyle = color; ctx.lineWidth = 3;
+            
+            // Dış Kalkan Halkası
+            ctx.beginPath(); ctx.arc(0, 0, 25, rotAngle, rotAngle + Math.PI); ctx.stroke();
+            ctx.beginPath(); ctx.arc(0, 0, 25, rotAngle + Math.PI + 0.5, rotAngle + Math.PI*2 - 0.5); ctx.stroke();
+            
+            // İç Çekirdek
             ctx.rotate(-rotAngle * 2);
-            ctx.fillStyle = color; ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI*2); ctx.fill();
+            let grad = ctx.createRadialGradient(0, 0, 2, 0, 0, 15);
+            grad.addColorStop(0, "#fff"); grad.addColorStop(1, color);
+            ctx.fillStyle = grad;
+            ctx.beginPath(); ctx.arc(0, 0, 12, 0, Math.PI*2); ctx.fill();
+            
         } 
-        else if (type === 'orb') {
-            // Plazma Küresi
-            ctx.fillStyle = "rgba(0,0,0,0.8)"; ctx.beginPath(); ctx.arc(0, 0, 20, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-            ctx.rotate(rotAngle * 1.5);
-            ctx.beginPath(); ctx.ellipse(0, 0, 25, 8, 0, 0, Math.PI*2); ctx.stroke();
-            ctx.beginPath(); ctx.ellipse(0, 0, 8, 25, 0, 0, Math.PI*2); ctx.stroke();
-            ctx.fillStyle = color; ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI*2); ctx.fill();
-        }
-        else if (type === 'hexa') {
-            // Ağır Altıgen
-            ctx.rotate(rotAngle * 0.5);
+        else if (modelType === 'fighter') {
+            // Yıldız Avcısı (Hareket yönüne döner)
+            if(speed > 0.5) ctx.rotate(moveAngle + Math.PI/2);
+            
+            ctx.fillStyle = "rgba(10, 15, 30, 0.9)";
+            ctx.strokeStyle = color; ctx.lineWidth = 2;
+            
+            // Kanatlar
             ctx.beginPath();
-            for (let i = 0; i < 6; i++) {
-                ctx.lineTo(25 * Math.cos(i * Math.PI / 3), 25 * Math.sin(i * Math.PI / 3));
+            ctx.moveTo(0, -30); // Burun
+            ctx.lineTo(25, 20); // Sağ kanat altı
+            ctx.lineTo(10, 15); // Sağ iç
+            ctx.lineTo(0, 25);  // Motor kıçı
+            ctx.lineTo(-10, 15); // Sol iç
+            ctx.lineTo(-25, 20); // Sol kanat altı
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+            
+            // Motor Ateşi
+            if(speed > 0.5) {
+                ctx.fillStyle = "#fff";
+                ctx.beginPath(); ctx.arc(0, 26, 5 + Math.random()*3, 0, Math.PI*2); ctx.fill();
             }
-            ctx.closePath(); ctx.stroke();
-            ctx.fillStyle = color; ctx.fillRect(-8, -8, 16, 16);
+        }
+        else if (modelType === 'orb') {
+            // Plazma Enerji Küresi
+            let pulse = Math.sin(rotAngle * 5) * 5;
+            
+            let grad = ctx.createRadialGradient(0, 0, 5, 0, 0, 25 + pulse);
+            grad.addColorStop(0, "#fff"); grad.addColorStop(0.4, color); grad.addColorStop(1, "transparent");
+            ctx.fillStyle = grad;
+            ctx.beginPath(); ctx.arc(0, 0, 30 + pulse, 0, Math.PI*2); ctx.fill();
+            
+            ctx.rotate(rotAngle * 2);
+            ctx.strokeStyle = "#fff"; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.ellipse(0, 0, 35, 10, 0, 0, Math.PI*2); ctx.stroke();
+            ctx.beginPath(); ctx.ellipse(0, 0, 10, 35, 0, 0, Math.PI*2); ctx.stroke();
         }
         
         ctx.restore();
+
+        // 3. Konuşma Simgesi (Mic Animasyonu)
+        if (isSpeaking) {
+            ctx.fillStyle = "#00fff5";
+            ctx.beginPath();
+            ctx.arc(x, y - 55, 6, 0, Math.PI*2); ctx.fill();
+            // Ses dalgaları
+            ctx.strokeStyle = "#00fff5"; ctx.lineWidth = 2;
+            let waveOffset = (rotAngle * 10) % 5;
+            ctx.beginPath(); ctx.arc(x, y - 55, 12 + waveOffset, Math.PI*1.2, Math.PI*1.8); ctx.stroke();
+            ctx.beginPath(); ctx.arc(x, y - 55, 18 + waveOffset, Math.PI*1.2, Math.PI*1.8); ctx.stroke();
+        }
     }
 
     function gameLoop() {
-        ctx.fillStyle = "#050508";
+        ctx.fillStyle = "#020204";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        rotAngle += 0.05;
+        rotAngle += 0.03;
 
         if (!gameState || !gameState.players[myId]) { requestAnimationFrame(gameLoop); return; }
         let me = gameState.players[myId];
         
-        // Yumuşak Kamera (Lerp)
-        camera.x += (me.x - canvas.width / 2 - camera.x) * 0.1;
-        camera.y += (me.y - canvas.height / 2 - camera.y) * 0.1;
+        camera.x += (me.x - canvas.width / 2 - camera.x) * 0.15;
+        camera.y += (me.y - canvas.height / 2 - camera.y) * 0.15;
 
         ctx.save();
         ctx.translate(-camera.x, -camera.y);
 
-        // Siber Izgara Arkaplan
-        ctx.strokeStyle = "rgba(0, 255, 245, 0.05)"; ctx.lineWidth = 1;
-        for (let x = 0; x <= gameState.map.width; x += 100) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, gameState.map.height); ctx.stroke(); }
-        for (let y = 0; y <= gameState.map.height; y += 100) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(gameState.map.width, y); ctx.stroke(); }
+        // Siber Teknoloji Arkaplan Izgarası
+        ctx.strokeStyle = "rgba(0, 255, 245, 0.03)"; ctx.lineWidth = 2;
+        for (let x = 0; x <= gameState.map.width; x += 150) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, gameState.map.height); ctx.stroke(); }
+        for (let y = 0; y <= gameState.map.height; y += 150) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(gameState.map.width, y); ctx.stroke(); }
 
-        // Ventleri Çiz
+        // Vent (Reaktör) Çizimi - Animasyonlu
         gameState.map.vents.forEach(v => {
-            ctx.fillStyle = "#1e293b"; ctx.strokeStyle = "#ff0055"; ctx.lineWidth = 3;
-            ctx.shadowBlur = 15; ctx.shadowColor = "#ff0055";
-            ctx.fillRect(v.x - 40, v.y - 40, 80, 80);
-            ctx.strokeRect(v.x - 40, v.y - 40, 80, 80);
-            // Izgaralar
-            ctx.shadowBlur = 0;
-            for(let i = -30; i <= 30; i+=15) {
-                ctx.beginPath(); ctx.moveTo(v.x - 35, v.y + i); ctx.lineTo(v.x + 35, v.y + i); ctx.stroke();
-            }
+            ctx.save();
+            ctx.translate(v.x, v.y);
+            
+            // Dış dönen uyarı çemberi
+            ctx.rotate(rotAngle * 0.5);
+            ctx.strokeStyle = "rgba(255,0,85,0.5)"; ctx.lineWidth = 4;
+            ctx.setLineDash([20, 15]);
+            ctx.beginPath(); ctx.arc(0, 0, 70, 0, Math.PI*2); ctx.stroke();
+            
+            // Merkez Reaktör
+            ctx.rotate(-rotAngle);
+            ctx.fillStyle = "#0a0510"; ctx.strokeStyle = "#ff0055"; ctx.lineWidth = 3;
+            ctx.setLineDash([]);
+            ctx.shadowBlur = 30; ctx.shadowColor = "#ff0055";
+            
+            ctx.beginPath(); ctx.moveTo(0, -45); ctx.lineTo(40, 25); ctx.lineTo(-40, 25); ctx.closePath();
+            ctx.fill(); ctx.stroke();
+            
+            // Merkez parlaması
+            ctx.fillStyle = "#ff0055"; ctx.beginPath(); ctx.arc(0, 5, 10, 0, Math.PI*2); ctx.fill();
+            
+            ctx.restore();
+            
+            // Vent İsmi
+            ctx.fillStyle = "rgba(255,0,85,0.8)"; ctx.font = "bold 14px Orbitron"; ctx.textAlign = "center";
+            ctx.fillText(v.name, v.x, v.y + 90);
         });
+
+        // Partikülleri Çiz (Işınlanma efekti)
+        for(let i=0; i<particles.length; i++) {
+            let p = particles[i];
+            p.x += p.vx; p.y += p.vy;
+            p.life -= 0.02;
+            if(p.life <= 0) { particles.splice(i, 1); i--; continue; }
+            ctx.fillStyle = p.color; ctx.globalAlpha = p.life;
+            ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2); ctx.fill();
+        }
+        ctx.globalAlpha = 1.0;
 
         // Oyuncuları Çiz
         for (let id in gameState.players) {
             let p = gameState.players[id];
-            if (p.inVent) continue; // Ventin içindeyse çizme (Görünmez)
+            if (p.inVent) continue;
 
-            drawModel(p.x, p.y, p.color, p.modelType);
+            drawAdvancedModel(p, id);
 
             // İsim Etiketi
-            ctx.fillStyle = "white"; ctx.font = "bold 16px Rajdhani"; ctx.textAlign = "center";
-            ctx.fillText(p.name, p.x, p.y + 40);
+            ctx.fillStyle = "rgba(255,255,255,0.9)"; ctx.font = "bold 16px Orbitron"; ctx.textAlign = "center";
+            ctx.shadowBlur = 10; ctx.shadowColor = p.color;
+            ctx.fillText(p.name, p.x, p.y + 50);
+            ctx.shadowBlur = 0;
 
             // Mesaj Balonu
             if (p.msg) {
                 ctx.font = "bold 14px Arial";
-                let msgW = ctx.measureText(p.msg).width + 20;
-                ctx.fillStyle = "rgba(255,255,255,0.9)";
-                ctx.beginPath(); ctx.roundRect(p.x - msgW/2, p.y - 60, msgW, 30, 8); ctx.fill();
-                ctx.fillStyle = "black"; ctx.fillText(p.msg, p.x, p.y - 40);
+                let msgW = ctx.measureText(p.msg).width + 30;
+                ctx.fillStyle = "rgba(0, 255, 245, 0.9)";
+                ctx.beginPath(); ctx.roundRect(p.x - msgW/2, p.y - 75, msgW, 35, 10); ctx.fill();
+                ctx.fillStyle = "#000"; ctx.fillText(p.msg, p.x, p.y - 52);
             }
         }
         ctx.restore();
