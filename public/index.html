@@ -2,88 +2,97 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <!-- MOBİL UYUM İÇİN ZORUNLU ETİKET -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sohbet Evreni - Mobil & Ses Destekli</title>
+    <title>Siber Evren - Vent & Voice</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap');
         
-        body { margin: 0; background: #0a0a12; color: #fff; font-family: 'Poppins', sans-serif; overflow: hidden; touch-action: none; }
+        body { margin: 0; background: #050508; color: #fff; font-family: 'Rajdhani', sans-serif; overflow: hidden; touch-action: none; user-select: none; }
         
-        /* GİRİŞ EKRANI */
-        #menuUI { position: fixed; width: 100vw; height: 100vh; background: radial-gradient(circle at center, #1f1c2c 0%, #000000 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; transition: opacity 0.5s; }
-        .box { background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 80%; max-width: 400px; }
-        h1 { font-weight: 800; font-size: 2rem; background: -webkit-linear-gradient(#00fff5, #ff00c8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        input, select { padding: 15px; width: calc(100% - 30px); margin-bottom: 20px; background: rgba(0,0,0,0.4); border: 2px solid #333; color: white; border-radius: 10px; font-family: 'Poppins'; font-size: 16px; outline: none; transition: 0.3s; }
-        input:focus { border-color: #00fff5; }
-        .btn { padding: 15px; width: 100%; background: linear-gradient(45deg, #00fff5, #0055ff); color: white; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; text-transform: uppercase; letter-spacing: 2px; }
-        
-        /* OYUN İÇİ ARAYÜZ (HUD) */
+        /* GENİŞLETİLMİŞ MENÜ */
+        #menuUI { position: fixed; width: 100vw; height: 100vh; background: radial-gradient(circle at center, #0f172a 0%, #000000 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; transition: opacity 0.5s; }
+        .box { background: rgba(15, 23, 42, 0.6); padding: 40px; border-radius: 20px; border: 1px solid rgba(0, 255, 245, 0.3); backdrop-filter: blur(15px); text-align: center; box-shadow: 0 0 50px rgba(0,255,245,0.1); width: 90%; max-width: 450px; }
+        h1 { font-weight: 700; font-size: 3rem; margin-bottom: 5px; color: #00fff5; text-shadow: 0 0 20px rgba(0,255,245,0.5); letter-spacing: 2px; }
+        .menu-row { display: flex; gap: 15px; margin-bottom: 20px; }
+        input, select { padding: 15px; width: 100%; background: rgba(0,0,0,0.5); border: 1px solid #334155; color: white; border-radius: 10px; font-family: 'Rajdhani'; font-size: 18px; outline: none; }
+        input:focus, select:focus { border-color: #00fff5; box-shadow: 0 0 10px rgba(0,255,245,0.3); }
+        .btn { padding: 15px; width: 100%; background: #00fff5; color: #000; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; font-size: 20px; text-transform: uppercase; box-shadow: 0 0 15px rgba(0,255,245,0.4); transition: 0.2s; }
+        .btn:hover { background: #fff; box-shadow: 0 0 25px #fff; transform: scale(1.02); }
+        .info-text { font-size: 14px; color: #94a3b8; margin-top: 15px; line-height: 1.5; }
+
         #gameArea { display: none; width: 100vw; height: 100vh; position: relative; }
         canvas { display: block; }
         
-        /* SOHBET GEÇMİŞİ KUTUSU */
-        #chatLogBox { position: absolute; top: 20px; left: 20px; width: 300px; height: 250px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; pointer-events: none; z-index: 10; font-size: 14px; backdrop-filter: blur(5px); }
+        /* ARAYÜZ ELEMANLARI */
+        #chatLogBox { position: absolute; top: 20px; left: 20px; width: 300px; height: 250px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; pointer-events: none; z-index: 10; font-size: 16px; backdrop-filter: blur(5px); }
         .log-msg { background: rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; word-wrap: break-word; }
-        .sys-msg { color: #ffeb3b; font-style: italic; font-size: 12px; }
 
-        /* MESAJ YAZMA KUTUSU */
-        #inputArea { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; display: flex; gap: 10px; z-index: 10; }
+        #inputArea { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; z-index: 10; }
         #chatInput { margin: 0; width: 100%; border-radius: 20px; border: 2px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.8); }
-        
-        /* MOBİL KONTROLLER (Sadece mobilde görünür) */
-        #mobileControls { display: none; position: absolute; bottom: 100px; left: 20px; width: 150px; height: 150px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 5px; z-index: 20; }
-        .d-btn { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; user-select: none; }
-        .d-btn:active { background: rgba(255,255,255,0.4); }
-        #btn-up { grid-column: 2; grid-row: 1; }
-        #btn-left { grid-column: 1; grid-row: 2; }
-        #btn-right { grid-column: 3; grid-row: 2; }
-        #btn-down { grid-column: 2; grid-row: 3; }
 
-        /* Medya Sorgusu: Ekran küçükse mobil kontrolleri göster, sohbet günlüğünü küçült */
+        /* MOBİL VE PC KONTROLLER (Vent, Mikrofon, Joystick) */
+        #actionContainer { position: absolute; bottom: 20px; right: 20px; display: flex; gap: 15px; z-index: 20; }
+        .action-btn { width: 60px; height: 60px; border-radius: 50%; background: rgba(15,23,42,0.8); border: 2px solid #00fff5; color: #00fff5; font-size: 14px; font-weight: bold; font-family: 'Rajdhani'; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 15px rgba(0,255,245,0.3); }
+        .action-btn.active { background: #00fff5; color: #000; }
+        #ventMenu { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.9); padding: 30px; border: 2px solid #ff0055; border-radius: 15px; z-index: 50; text-align: center; }
+        
+        /* SANAL JOYSTICK (Mobilde kaymak gibi hareket) */
+        #joystickZone { position: absolute; bottom: 20px; left: 20px; width: 150px; height: 150px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 50%; z-index: 20; display: none; }
+        #joystickKnob { position: absolute; top: 50px; left: 50px; width: 50px; height: 50px; background: rgba(0,255,245,0.5); border-radius: 50%; pointer-events: none; transition: 0.1s ease-out; }
+
         @media (max-width: 768px) {
-            #mobileControls { display: grid; }
-            #chatLogBox { width: 200px; height: 150px; font-size: 12px; }
-            #inputArea { bottom: 10px; }
+            #joystickZone { display: block; }
+            #chatLogBox { width: 200px; height: 150px; font-size: 14px; top: 10px; left: 10px; }
+            #inputArea { bottom: 180px; } /* Klavyeden kaçmak için yukarı al */
         }
     </style>
     <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
 
-    <!-- GİRİŞ EKRANI -->
     <div id="menuUI">
         <div class="box">
-            <h1>NEON SOHBET</h1>
-            <p style="color: #aaa; font-size: 12px; margin-top: -15px;">Özel ses çalmak için sohbete /ses <link> yazın.</p>
-            <input type="text" id="username" placeholder="Karakter Adın" maxlength="15">
-            <select id="colorSelect">
-                <option value="#00d2ff">Buz Mavisi</option>
-                <option value="#ff004c">Neon Kırmızı</option>
-                <option value="#39ff14">Zehir Yeşili</option>
-                <option value="#f9a826">Güneş Turuncusu</option>
-                <option value="#a200ff">Galaksi Moru</option>
-            </select>
-            <button class="btn" onclick="joinGame()">Evrene Katıl</button>
+            <h1>SİBER EVREN</h1>
+            <p class="info-text">Mikrofon izni istenecek, sesli sohbet için [V] basılı tut.</p>
+            <input type="text" id="username" placeholder="Sörfçü Adın" maxlength="15">
+            <div class="menu-row">
+                <select id="colorSelect">
+                    <option value="#00fff5">Siyan Ruhu</option>
+                    <option value="#ff0055">Kızıl Öfke</option>
+                    <option value="#39ff14">Zehir Matrisi</option>
+                    <option value="#ffaa00">Güneş Çekirdeği</option>
+                </select>
+                <select id="modelSelect">
+                    <option value="drone">Delta Drone</option>
+                    <option value="orb">Plazma Küresi</option>
+                    <option value="hexa">Hexa Tank</option>
+                </select>
+            </div>
+            <button class="btn" onclick="joinGame()">BAĞLANTIYI BAŞLAT</button>
         </div>
     </div>
 
-    <!-- OYUN ALANI -->
     <div id="gameArea">
         <canvas id="gameCanvas"></canvas>
-        
         <div id="chatLogBox"></div>
+        <div id="inputArea"><input type="text" id="chatInput" placeholder="Mesaj..." autocomplete="off"></div>
         
-        <div id="inputArea">
-            <input type="text" id="chatInput" placeholder="Sohbet et veya komut gir (/ses URL)..." autocomplete="off">
+        <div id="joystickZone"><div id="joystickKnob"></div></div>
+        
+        <div id="actionContainer">
+            <div id="ventBtn" class="action-btn" onclick="interactVent()" style="display:none; border-color: #ff0055; color: #ff0055;">VENT (E)</div>
+            <div id="micBtn" class="action-btn">MIC (V)</div>
         </div>
 
-        <!-- MOBİL D-PAD -->
-        <div id="mobileControls" style="display: none;">
-            <div class="d-btn" id="btn-up">▲</div>
-            <div class="d-btn" id="btn-left">◀</div>
-            <div class="d-btn" id="btn-right">▶</div>
-            <div class="d-btn" id="btn-down">▼</div>
+        <div id="ventMenu">
+            <h2 style="color: #ff0055; margin-top:0;">HAVALANDIRMA AĞI</h2>
+            <div style="display: flex; gap:10px; flex-wrap: wrap; justify-content: center; width: 200px;">
+                <button class="btn" style="background:#ff0055;" onclick="travelVent(1)">KuzeyBatı (1)</button>
+                <button class="btn" style="background:#ff0055;" onclick="travelVent(2)">KuzeyDoğu (2)</button>
+                <button class="btn" style="background:#ff0055;" onclick="travelVent(3)">Merkez (3)</button>
+                <button class="btn" style="background:#ff0055;" onclick="travelVent(4)">GüneyBatı (4)</button>
+                <button class="btn" style="background:#ff0055;" onclick="travelVent(5)">GüneyDoğu (5)</button>
+            </div>
         </div>
     </div>
 
@@ -91,211 +100,264 @@
     const socket = io();
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
-    const chatInput = document.getElementById("chatInput");
     const chatLogBox = document.getElementById("chatLogBox");
-
+    
     let gameState = null;
     let myId = null;
     let camera = { x: 0, y: 0 };
-    const keys = {};
-    
-    // Görsel Efektler (Parçacıklar ve Oyuncu İzleri)
-    const particles = [];
-    const playerTrails = {};
+    let rotAngle = 0; // Modellerin sürekli dönmesi için
+    let moveVector = { x: 0, y: 0 };
 
-    // Gömülü Ses Efektleri (Telifsiz genel URL'ler)
-    const sfx = {
-        msg: new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3'),
-        join: new Audio('https://www.soundjay.com/buttons/sounds/button-10.mp3'),
-        leave: new Audio('https://www.soundjay.com/buttons/sounds/button-04.mp3')
-    };
-    Object.values(sfx).forEach(audio => audio.volume = 0.3); // Ses seviyesini kıs
+    // SESLİ SOHBET (Voice Chat) KURULUMU
+    let mediaRecorder;
+    let isRecording = false;
 
-    // Boyutlandırma
-    function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        // Mobildeyse D-Pad'i göster
-        document.getElementById('mobileControls').style.display = window.innerWidth <= 768 ? 'grid' : 'none';
+    async function initVoiceChat() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) socket.emit('voiceStream', e.data);
+            };
+        } catch (err) {
+            console.log("Mikrofon izni verilmedi veya desteklenmiyor.", err);
+        }
     }
-    window.addEventListener('resize', resize);
-    resize();
 
-    // Arka plan parçacıklarını oluştur
-    for(let i=0; i<150; i++) {
-        particles.push({
-            x: Math.random() * 2000, y: Math.random() * 2000,
-            size: Math.random() * 2, speed: Math.random() * 0.5
-        });
-    }
+    // Bas-Konuş Mantığı
+    function startVoice() { if(mediaRecorder && mediaRecorder.state === 'inactive') { mediaRecorder.start(100); isRecording = true; document.getElementById('micBtn').classList.add('active'); } }
+    function stopVoice() { if(mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); isRecording = false; document.getElementById('micBtn').classList.remove('active'); } }
+
+    socket.on('voiceStream', (data) => {
+        // Gelen sesi Web Audio ile anında çal
+        const blob = new Blob([data.audio], { type: 'audio/webm;codecs=opus' });
+        const audioUrl = URL.createObjectURL(blob);
+        const audio = new Audio(audioUrl);
+        audio.play().catch(e => console.log(e));
+    });
+
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
 
     function joinGame() {
-        const name = document.getElementById("username").value.trim() || "Oyuncu";
-        const color = document.getElementById("colorSelect").value;
-        
-        socket.emit("joinGame", { name, color });
+        initVoiceChat(); // Mikrofonu aktifleştir
+        socket.emit("joinGame", { 
+            name: document.getElementById("username").value.trim() || "Oyuncu", 
+            color: document.getElementById("colorSelect").value,
+            modelType: document.getElementById("modelSelect").value
+        });
         
         document.getElementById("menuUI").style.opacity = "0";
-        setTimeout(() => {
-            document.getElementById("menuUI").style.display = "none";
-            document.getElementById("gameArea").style.display = "block";
-        }, 500);
-
+        setTimeout(() => { document.getElementById("menuUI").style.display = "none"; document.getElementById("gameArea").style.display = "block"; }, 500);
         requestAnimationFrame(gameLoop);
     }
 
-    // Soket Dinleyicileri
     socket.on("connect", () => { myId = socket.id; });
-    socket.on("gameState", (state) => { gameState = state; });
+    socket.on("gameState", (state) => { gameState = state; checkVentDistance(); });
     
-    // Ses Çalma Emirleri
-    socket.on("playSound", (type) => { if(sfx[type]) sfx[type].play().catch(e=>console.log(e)); });
-    socket.on("playCustomSound", (url) => { 
-        try { 
-            let customAudio = new Audio(url); 
-            customAudio.volume = 0.5;
-            customAudio.play(); 
-        } catch(e) { console.log("Ses çalınamadı:", e); } 
-    });
-
-    // Sohbet Günlüğü Güncellemesi
     socket.on("newChatMessage", (data) => {
-        const div = document.createElement("div");
-        div.className = "log-msg";
+        const div = document.createElement("div"); div.className = "log-msg";
         div.innerHTML = `<span style="color:${data.color}; font-weight:bold;">${data.name}:</span> ${data.text}`;
-        chatLogBox.appendChild(div);
-        chatLogBox.scrollTop = chatLogBox.scrollHeight; // Otomatik aşağı kaydır
-    });
-    socket.on("serverMessage", (msg) => {
-        const div = document.createElement("div"); div.className = "sys-msg"; div.innerText = msg;
-        chatLogBox.appendChild(div);
-        chatLogBox.scrollTop = chatLogBox.scrollHeight;
+        chatLogBox.appendChild(div); chatLogBox.scrollTop = chatLogBox.scrollHeight;
     });
 
-    // Klavye Kontrolleri
+    // Vektörel Klavye Kontrolleri (Akıcı)
+    const keys = {};
     window.addEventListener("keydown", (e) => {
-        if (document.activeElement === chatInput) { 
-            if (e.key === "Enter") sendMsg();
-            socket.emit('typing', true);
-            return; 
-        }
+        if (document.activeElement === document.getElementById('chatInput')) return;
         keys[e.key.toLowerCase()] = true;
+        if (e.key.toLowerCase() === 'e') interactVent();
+        if (e.key.toLowerCase() === 'v') startVoice();
+        updateMovement();
     });
     window.addEventListener("keyup", (e) => {
-        if (document.activeElement === chatInput) { socket.emit('typing', false); return; }
-        delete keys[e.key.toLowerCase()];
+        if (e.key === 'Enter' && document.activeElement === document.getElementById('chatInput')) {
+            const val = document.getElementById('chatInput').value;
+            if(val) socket.emit('chat', val);
+            document.getElementById('chatInput').value = '';
+        }
+        keys[e.key.toLowerCase()] = false;
+        if (e.key.toLowerCase() === 'v') stopVoice();
+        updateMovement();
     });
 
-    // Mobil Dokunmatik Kontroller
-    function setupMobileButton(id, dir) {
-        const btn = document.getElementById(id);
-        btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[dir] = true; });
-        btn.addEventListener('touchend', (e) => { e.preventDefault(); delete keys[dir]; });
+    function updateMovement() {
+        moveVector = { x: 0, y: 0 };
+        if (keys["w"] || keys["arrowup"]) moveVector.y = -1;
+        if (keys["s"] || keys["arrowdown"]) moveVector.y = 1;
+        if (keys["a"] || keys["arrowleft"]) moveVector.x = -1;
+        if (keys["d"] || keys["arrowright"]) moveVector.x = 1;
+        
+        // Çapraz gidişi normalize et (Hızlı çapraz gitmeyi engeller)
+        if(moveVector.x !== 0 && moveVector.y !== 0) {
+            let length = Math.sqrt(moveVector.x**2 + moveVector.y**2);
+            moveVector.x /= length; moveVector.y /= length;
+        }
+        socket.emit('move', moveVector);
     }
-    setupMobileButton('btn-up', 'w');
-    setupMobileButton('btn-down', 's');
-    setupMobileButton('btn-left', 'a');
-    setupMobileButton('btn-right', 'd');
 
-    // Hareket Döngüsü
-    setInterval(() => {
-        if (document.activeElement === chatInput) return;
-        if (keys["w"] || keys["arrowup"]) socket.emit("move", "UP");
-        if (keys["s"] || keys["arrowdown"]) socket.emit("move", "DOWN");
-        if (keys["a"] || keys["arrowleft"]) socket.emit("move", "LEFT");
-        if (keys["d"] || keys["arrowright"]) socket.emit("move", "RIGHT");
-    }, 30);
+    // SANAL JOYSTICK MANTIĞI
+    const joyZone = document.getElementById('joystickZone');
+    const joyKnob = document.getElementById('joystickKnob');
+    let joyCenter = {x: 75, y: 75}; // zone div'in merkezi (150/2)
+    
+    joyZone.addEventListener('touchstart', handleJoy);
+    joyZone.addEventListener('touchmove', handleJoy);
+    joyZone.addEventListener('touchend', () => {
+        joyKnob.style.transform = `translate(0px, 0px)`;
+        moveVector = {x: 0, y: 0};
+        socket.emit('move', moveVector);
+    });
 
-    function sendMsg() {
-        if (chatInput.value.trim() !== "") { 
-            socket.emit("chat", chatInput.value); 
-            chatInput.value = ""; 
-            socket.emit('typing', false);
+    function handleJoy(e) {
+        e.preventDefault();
+        const rect = joyZone.getBoundingClientRect();
+        const touch = e.touches[0];
+        let dx = (touch.clientX - rect.left) - joyCenter.x;
+        let dy = (touch.clientY - rect.top) - joyCenter.y;
+        
+        const dist = Math.hypot(dx, dy);
+        const maxRadius = 50;
+        
+        // Dışarı taşmayı engelle
+        if (dist > maxRadius) {
+            dx = (dx / dist) * maxRadius;
+            dy = (dy / dist) * maxRadius;
+        }
+        
+        joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+        
+        // Değerleri -1 ile 1 arasına çekip sunucuya yolla
+        moveVector = { x: dx / maxRadius, y: dy / maxRadius };
+        socket.emit('move', moveVector);
+    }
+
+    // Mobil Mic Butonu
+    const micBtn = document.getElementById('micBtn');
+    micBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startVoice(); });
+    micBtn.addEventListener('touchend', (e) => { e.preventDefault(); stopVoice(); });
+
+    // VENT MANTIĞI
+    function checkVentDistance() {
+        if(!gameState || !gameState.players[myId]) return;
+        let me = gameState.players[myId];
+        let ventBtn = document.getElementById('ventBtn');
+        let ventMenu = document.getElementById('ventMenu');
+        
+        if (me.inVent) {
+            ventBtn.style.display = 'flex';
+            ventBtn.innerText = 'ÇIK (E)';
+            ventMenu.style.display = 'block';
+            return;
+        } else {
+            ventMenu.style.display = 'none';
+        }
+
+        let nearVent = gameState.map.vents.some(v => Math.hypot(v.x - me.x, v.y - me.y) < 80);
+        if (nearVent) {
+            ventBtn.style.display = 'flex';
+            ventBtn.innerText = 'GİR (E)';
+        } else {
+            ventBtn.style.display = 'none';
         }
     }
+    
+    function interactVent() { socket.emit('toggleVent'); }
+    function travelVent(id) { socket.emit('travelVent', id); }
 
-    // --- KAMERA VE ÇİZİM MOTORU ---
+    // ÇİZİM MOTORU (GELİŞMİŞ MODELLER)
+    function drawModel(x, y, color, type) {
+        ctx.save();
+        ctx.translate(x, y);
+        
+        // Ortak Parlama Efekti
+        ctx.shadowBlur = 20; ctx.shadowColor = color;
+        ctx.strokeStyle = color; ctx.lineWidth = 2;
+
+        if (type === 'drone') {
+            ctx.rotate(rotAngle);
+            // Dış üçgen (Dönüyor)
+            ctx.beginPath(); ctx.moveTo(0, -25); ctx.lineTo(22, 12); ctx.lineTo(-22, 12); ctx.closePath(); ctx.stroke();
+            // İç Çekirdek (Ters dönüyor)
+            ctx.rotate(-rotAngle * 2);
+            ctx.fillStyle = color; ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI*2); ctx.fill();
+        } 
+        else if (type === 'orb') {
+            // Plazma Küresi
+            ctx.fillStyle = "rgba(0,0,0,0.8)"; ctx.beginPath(); ctx.arc(0, 0, 20, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+            ctx.rotate(rotAngle * 1.5);
+            ctx.beginPath(); ctx.ellipse(0, 0, 25, 8, 0, 0, Math.PI*2); ctx.stroke();
+            ctx.beginPath(); ctx.ellipse(0, 0, 8, 25, 0, 0, Math.PI*2); ctx.stroke();
+            ctx.fillStyle = color; ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI*2); ctx.fill();
+        }
+        else if (type === 'hexa') {
+            // Ağır Altıgen
+            ctx.rotate(rotAngle * 0.5);
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+                ctx.lineTo(25 * Math.cos(i * Math.PI / 3), 25 * Math.sin(i * Math.PI / 3));
+            }
+            ctx.closePath(); ctx.stroke();
+            ctx.fillStyle = color; ctx.fillRect(-8, -8, 16, 16);
+        }
+        
+        ctx.restore();
+    }
+
     function gameLoop() {
-        ctx.fillStyle = "#0a0a12";
+        ctx.fillStyle = "#050508";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        rotAngle += 0.05;
 
         if (!gameState || !gameState.players[myId]) { requestAnimationFrame(gameLoop); return; }
-
         let me = gameState.players[myId];
         
-        // Kamera Takibi (Yumuşak Geçiş)
+        // Yumuşak Kamera (Lerp)
         camera.x += (me.x - canvas.width / 2 - camera.x) * 0.1;
         camera.y += (me.y - canvas.height / 2 - camera.y) * 0.1;
 
         ctx.save();
         ctx.translate(-camera.x, -camera.y);
 
-        // Arka Plan Izgarası ve Parçacıklar
-        ctx.strokeStyle = "rgba(255,255,255,0.03)";
-        ctx.lineWidth = 2;
+        // Siber Izgara Arkaplan
+        ctx.strokeStyle = "rgba(0, 255, 245, 0.05)"; ctx.lineWidth = 1;
         for (let x = 0; x <= gameState.map.width; x += 100) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, gameState.map.height); ctx.stroke(); }
         for (let y = 0; y <= gameState.map.height; y += 100) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(gameState.map.width, y); ctx.stroke(); }
 
-        ctx.fillStyle = "rgba(255,255,255,0.5)";
-        particles.forEach(p => {
-            p.y -= p.speed;
-            if(p.y < 0) p.y = gameState.map.height;
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+        // Ventleri Çiz
+        gameState.map.vents.forEach(v => {
+            ctx.fillStyle = "#1e293b"; ctx.strokeStyle = "#ff0055"; ctx.lineWidth = 3;
+            ctx.shadowBlur = 15; ctx.shadowColor = "#ff0055";
+            ctx.fillRect(v.x - 40, v.y - 40, 80, 80);
+            ctx.strokeRect(v.x - 40, v.y - 40, 80, 80);
+            // Izgaralar
+            ctx.shadowBlur = 0;
+            for(let i = -30; i <= 30; i+=15) {
+                ctx.beginPath(); ctx.moveTo(v.x - 35, v.y + i); ctx.lineTo(v.x + 35, v.y + i); ctx.stroke();
+            }
         });
 
         // Oyuncuları Çiz
         for (let id in gameState.players) {
             let p = gameState.players[id];
-            
-            // Oyuncu İzi (Trail) Efekti
-            if (!playerTrails[id]) playerTrails[id] = [];
-            playerTrails[id].push({x: p.x, y: p.y, alpha: 1});
-            if (playerTrails[id].length > 10) playerTrails[id].shift();
+            if (p.inVent) continue; // Ventin içindeyse çizme (Görünmez)
 
-            for(let i=0; i<playerTrails[id].length; i++) {
-                let trail = playerTrails[id][i];
-                ctx.beginPath(); ctx.arc(trail.x, trail.y, 20 * (i/10), 0, Math.PI*2);
-                ctx.fillStyle = p.color; ctx.globalAlpha = (i/10) * 0.3;
-                ctx.fill();
-            }
-            ctx.globalAlpha = 1.0; // Saydamlığı sıfırla
-
-            // Oyuncu Dairesi
-            ctx.beginPath(); ctx.arc(p.x, p.y, 25, 0, Math.PI * 2);
-            ctx.fillStyle = p.color; ctx.fill(); 
-            ctx.shadowBlur = 25; ctx.shadowColor = p.color; ctx.fill(); ctx.shadowBlur = 0;
-            
-            // İç tasarım (Cam efekti)
-            ctx.beginPath(); ctx.arc(p.x - 5, p.y - 5, 8, 0, Math.PI * 2);
-            ctx.fillStyle = "rgba(255,255,255,0.4)"; ctx.fill();
+            drawModel(p.x, p.y, p.color, p.modelType);
 
             // İsim Etiketi
-            ctx.fillStyle = "white"; ctx.font = "bold 14px Poppins"; ctx.textAlign = "center";
-            ctx.fillText(p.name, p.x, p.y + 45);
-
-            // "Yazıyor..." Göstergesi
-            if (p.isTyping && !p.msg) {
-                ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.font = "italic 12px Poppins";
-                ctx.fillText("yazıyor...", p.x, p.y - 35);
-            }
+            ctx.fillStyle = "white"; ctx.font = "bold 16px Rajdhani"; ctx.textAlign = "center";
+            ctx.fillText(p.name, p.x, p.y + 40);
 
             // Mesaj Balonu
             if (p.msg) {
-                ctx.font = "14px Poppins";
-                let msgWidth = ctx.measureText(p.msg).width + 30;
-                
-                // Balon Arkaplanı
-                ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-                ctx.beginPath(); ctx.roundRect(p.x - msgWidth/2, p.y - 75, msgWidth, 35, 10); ctx.fill();
-                
-                // Balon Ok Ucu
-                ctx.beginPath(); ctx.moveTo(p.x - 10, p.y - 40); ctx.lineTo(p.x + 10, p.y - 40); ctx.lineTo(p.x, p.y - 30); ctx.fill();
-                
-                // Yazı
-                ctx.fillStyle = "black"; ctx.fillText(p.msg, p.x, p.y - 53);
+                ctx.font = "bold 14px Arial";
+                let msgW = ctx.measureText(p.msg).width + 20;
+                ctx.fillStyle = "rgba(255,255,255,0.9)";
+                ctx.beginPath(); ctx.roundRect(p.x - msgW/2, p.y - 60, msgW, 30, 8); ctx.fill();
+                ctx.fillStyle = "black"; ctx.fillText(p.msg, p.x, p.y - 40);
             }
         }
-
         ctx.restore();
         requestAnimationFrame(gameLoop);
     }
