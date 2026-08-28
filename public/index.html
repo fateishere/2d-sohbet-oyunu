@@ -3,180 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Neon Sohbet - Among Us Style</title>
+<title>Neon Sohbet v3 • Voice + Vents</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
-
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-body { margin: 0; background: #0a0a12; color: #fff; font-family: 'Poppins', sans-serif; overflow: hidden; touch-action: none; user-select: none; }
-
-#menuUI {
-  position: fixed; inset: 0;
-  background: radial-gradient(circle at center, #1a1625 0%, #050508 100%);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  z-index: 100; transition: opacity 0.4s;
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+body{background:#07070f;color:#fff;font-family:'Poppins',sans-serif;overflow:hidden;touch-action:none;user-select:none}
+#menuUI{position:fixed;inset:0;background:radial-gradient(circle at 50% 40%,#1a1428 0%,#05050c 100%);display:flex;align-items:center;justify-content:center;z-index:200;transition:opacity .4s}
+.box{background:rgba(255,255,255,.06);padding:36px 30px;border-radius:26px;border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(22px);width:90%;max-width:390px;text-align:center;box-shadow:0 30px 70px rgba(0,0,0,.65)}
+h1{font-weight:800;font-size:2.3rem;background:linear-gradient(90deg,#00fff5,#ff00c8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.sub{color:#777;font-size:13px;margin-bottom:22px}
+input,select{width:100%;padding:14px 16px;margin-bottom:13px;background:rgba(0,0,0,.5);border:2px solid #333;color:#fff;border-radius:13px;font-size:16px;font-family:'Poppins';outline:none}
+input:focus,select:focus{border-color:#00fff5}
+.btn{width:100%;padding:15px;border:none;border-radius:13px;background:linear-gradient(45deg,#00fff5,#0066ff);color:#fff;font-weight:700;font-size:16px;letter-spacing:1px;cursor:pointer;text-transform:uppercase}
+.btn:active{transform:scale(.97)}
+#gameArea{display:none;width:100vw;height:100vh;position:relative}
+canvas{display:block;width:100%;height:100%}
+#chatLogBox{position:absolute;top:12px;left:12px;width:min(290px,68vw);height:175px;background:rgba(0,0,0,.58);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px;overflow-y:auto;font-size:13px;backdrop-filter:blur(10px);z-index:20;pointer-events:auto}
+.log-msg{background:rgba(255,255,255,.07);padding:6px 10px;border-radius:8px;margin-bottom:5px;word-break:break-word}
+.sys-msg{color:#ffeb3b;font-style:italic;font-size:12px;margin-bottom:4px}
+#playerList{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.58);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 12px;font-size:12px;backdrop-filter:blur(10px);z-index:20;max-height:190px;overflow-y:auto;min-width:140px}
+#playerList h4{margin:0 0 6px;font-size:13px;color:#00fff5}
+#inputArea{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:92%;max-width:540px;display:flex;gap:8px;z-index:30}
+#chatInput{flex:1;padding:13px 18px;border-radius:24px;border:2px solid rgba(255,255,255,.18);background:rgba(0,0,0,.78);color:#fff;font-size:15px;outline:none}
+#sendBtn{padding:0 18px;border-radius:24px;border:none;background:linear-gradient(45deg,#00fff5,#0066ff);color:#fff;font-weight:700;font-size:18px}
+#joystickArea{position:absolute;bottom:105px;left:18px;width:135px;height:135px;z-index:40;display:none}
+#joystickBase{width:135px;height:135px;border-radius:50%;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.22);position:relative}
+#joystickKnob{width:56px;height:56px;border-radius:50%;background:rgba(0,255,245,.75);border:2px solid #fff;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;transition:transform .05s linear}
+#actionButtons{position:absolute;bottom:105px;right:16px;display:none;flex-direction:column;gap:11px;z-index:40}
+.action-btn{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.11);border:2px solid rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff}
+.action-btn:active,.action-btn.active{background:rgba(0,255,245,.4);border-color:#00fff5}
+#ventMenu{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(8,8,18,.96);border:2px solid #00fff5;border-radius:20px;padding:22px;z-index:80;display:none;text-align:center;min-width:260px;box-shadow:0 0 40px rgba(0,255,245,.25)}
+#ventMenu h3{margin:0 0 14px;color:#00fff5;font-size:18px}
+.vent-btn{display:block;width:100%;margin:7px 0;padding:13px;background:rgba(0,255,245,.12);border:1px solid #00fff5;border-radius:11px;color:#fff;font-size:14px;cursor:pointer}
+.vent-btn:active{background:rgba(0,255,245,.3)}
+#closeVent{margin-top:12px;background:rgba(255,60,60,.18);border-color:#ff5555}
+#minimap{position:absolute;bottom:105px;right:16px;width:130px;height:130px;background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.18);border-radius:14px;z-index:25;display:none;overflow:hidden}
+#minimapCanvas{width:100%;height:100%}
+#topBar{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:25;align-items:center}
+.hud-pill{background:rgba(0,0,0,.55);padding:6px 13px;border-radius:20px;font-size:12px;border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:6px}
+.icon-btn{width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.icon-btn.active{background:rgba(0,255,245,.25);border-color:#00fff5}
+#settingsPanel{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,20,.97);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:24px;z-index:90;display:none;width:90%;max-width:340px}
+#settingsPanel h3{margin-bottom:16px;color:#00fff5}
+.setting-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:14px}
+#voiceIndicator{position:absolute;bottom:190px;left:50%;transform:translateX(-50%);background:rgba(0,200,100,.25);border:1px solid #00ff88;padding:6px 14px;border-radius:20px;font-size:12px;z-index:30;display:none}
+@media(max-width:900px){
+  #joystickArea{display:block}
+  #actionButtons{display:flex}
+  #minimap{display:block;bottom:255px;right:14px;width:115px;height:115px}
+  #chatLogBox{height:145px}
 }
-.box {
-  background: rgba(255,255,255,0.06);
-  padding: 32px 28px; border-radius: 24px;
-  border: 1px solid rgba(255,255,255,0.12);
-  backdrop-filter: blur(20px);
-  text-align: center; width: 90%; max-width: 380px;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.6);
-}
-h1 {
-  font-weight: 800; font-size: 2.1rem; margin: 0 0 8px;
-  background: linear-gradient(90deg, #00fff5, #ff00c8);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.subtitle { color: #888; font-size: 13px; margin-bottom: 22px; }
-input, select {
-  width: 100%; padding: 14px 16px; margin-bottom: 14px;
-  background: rgba(0,0,0,0.45); border: 2px solid #333;
-  color: #fff; border-radius: 12px; font-size: 16px; outline: none;
-  font-family: 'Poppins';
-}
-input:focus, select:focus { border-color: #00fff5; }
-.btn {
-  width: 100%; padding: 15px; border: none; border-radius: 12px;
-  background: linear-gradient(45deg, #00fff5, #0066ff);
-  color: #fff; font-weight: 700; font-size: 16px; letter-spacing: 1px;
-  cursor: pointer; text-transform: uppercase;
-}
-.btn:active { transform: scale(0.97); }
-
-#gameArea { display: none; width: 100vw; height: 100vh; position: relative; }
-canvas { display: block; width: 100%; height: 100%; }
-
-/* HUD */
-#chatLogBox {
-  position: absolute; top: 12px; left: 12px;
-  width: min(280px, 70vw); height: 180px;
-  background: rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 14px; padding: 10px; overflow-y: auto;
-  font-size: 13px; backdrop-filter: blur(8px); z-index: 15;
-  pointer-events: auto;
-}
-.log-msg { background: rgba(255,255,255,0.08); padding: 6px 10px; border-radius: 8px; margin-bottom: 5px; word-break: break-word; }
-.sys-msg { color: #ffeb3b; font-style: italic; font-size: 12px; margin-bottom: 4px; }
-
-#playerList {
-  position: absolute; top: 12px; right: 12px;
-  background: rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 14px; padding: 10px 12px; font-size: 12px;
-  backdrop-filter: blur(8px); z-index: 15; max-height: 200px; overflow-y: auto;
-  min-width: 130px;
-}
-#playerList h4 { margin: 0 0 6px; font-size: 13px; color: #00fff5; }
-
-#inputArea {
-  position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
-  width: 92%; max-width: 560px; display: flex; gap: 8px; z-index: 20;
-}
-#chatInput {
-  flex: 1; margin: 0; padding: 13px 18px; border-radius: 24px;
-  border: 2px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.75);
-  color: #fff; font-size: 15px; outline: none;
-}
-#sendBtn {
-  padding: 0 18px; border-radius: 24px; border: none;
-  background: linear-gradient(45deg, #00fff5, #0066ff); color: #fff; font-weight: 700;
-}
-
-/* Mobil Kontroller */
-#joystickArea {
-  position: absolute; bottom: 110px; left: 20px;
-  width: 130px; height: 130px; z-index: 25;
-  display: none;
-}
-#joystickBase {
-  width: 130px; height: 130px; border-radius: 50%;
-  background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.25);
-  position: relative;
-}
-#joystickKnob {
-  width: 55px; height: 55px; border-radius: 50%;
-  background: rgba(0,255,245,0.7); border: 2px solid #fff;
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-
-#actionButtons {
-  position: absolute; bottom: 110px; right: 20px;
-  display: none; flex-direction: column; gap: 10px; z-index: 25;
-}
-.action-btn {
-  width: 58px; height: 58px; border-radius: 50%;
-  background: rgba(255,255,255,0.12); border: 2px solid rgba(255,255,255,0.3);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px; color: #fff;
-}
-.action-btn:active { background: rgba(0,255,245,0.4); }
-
-/* Vent Menüsü */
-#ventMenu {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  background: rgba(10,10,20,0.95); border: 2px solid #00fff5;
-  border-radius: 18px; padding: 20px; z-index: 50; display: none;
-  text-align: center; min-width: 240px;
-}
-#ventMenu h3 { margin: 0 0 12px; color: #00fff5; }
-.vent-btn {
-  display: block; width: 100%; margin: 6px 0; padding: 12px;
-  background: rgba(0,255,245,0.15); border: 1px solid #00fff5;
-  border-radius: 10px; color: #fff; font-size: 14px; cursor: pointer;
-}
-.vent-btn:active { background: rgba(0,255,245,0.35); }
-#closeVent { margin-top: 10px; background: rgba(255,50,50,0.2); border-color: #ff4444; }
-
-/* Minimap */
-#minimap {
-  position: absolute; bottom: 110px; right: 20px;
-  width: 140px; height: 140px;
-  background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 12px; z-index: 15; display: none;
-}
-#minimapCanvas { width: 100%; height: 100%; border-radius: 12px; }
-
-/* Ses & Diğer */
-#topBar {
-  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 10px; z-index: 15; align-items: center;
-}
-#onlineCount {
-  background: rgba(0,0,0,0.55); padding: 6px 14px; border-radius: 20px;
-  font-size: 13px; border: 1px solid rgba(255,255,255,0.1);
-}
-.vol-btn {
-  width: 36px; height: 36px; border-radius: 50%;
-  background: rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.15);
-  color: #fff; font-size: 16px; display: flex; align-items: center; justify-content: center;
-}
-
-@media (max-width: 900px) {
-  #joystickArea, #actionButtons { display: block; }
-  #actionButtons { display: flex; }
-  #minimap { display: block; bottom: 260px; right: 16px; width: 110px; height: 110px; }
-  #chatLogBox { height: 140px; width: min(240px, 65vw); }
-  #playerList { max-height: 140px; font-size: 11px; }
-}
-
-@media (min-width: 901px) {
-  #joystickArea, #actionButtons { display: none !important; }
-  #minimap { display: block; bottom: 20px; right: 20px; }
+@media(min-width:901px){
+  #joystickArea,#actionButtons{display:none!important}
+  #minimap{display:block;bottom:18px;right:18px}
 }
 </style>
 <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-
-<!-- GİRİŞ -->
 <div id="menuUI">
   <div class="box">
     <h1>NEON SOHBET</h1>
-    <p class="subtitle">Among Us tarzı vent sistemi • Mobil uyumlu</p>
-    <input type="text" id="username" placeholder="Karakter adın" maxlength="15" autocomplete="off">
+    <p class="sub">Proximity Voice • Vent • Power-ups • Akıcı Hareket</p>
+    <input type="text" id="username" placeholder="Karakter adın" maxlength="14" autocomplete="off">
     <select id="colorSelect">
       <option value="#00d2ff">Buz Mavisi</option>
       <option value="#ff004c">Neon Kırmızı</option>
@@ -185,56 +74,45 @@ canvas { display: block; width: 100%; height: 100%; }
       <option value="#a200ff">Galaksi Moru</option>
       <option value="#ff6bcb">Pembe Neon</option>
       <option value="#00ff9d">Aqua</option>
+      <option value="#ff9f1c">Turuncu Ateş</option>
     </select>
     <button class="btn" onclick="joinGame()">EVRENE KATIL</button>
   </div>
 </div>
 
-<!-- OYUN -->
 <div id="gameArea">
   <canvas id="gameCanvas"></canvas>
-
   <div id="chatLogBox"></div>
-
-  <div id="playerList">
-    <h4>Oyuncular <span id="pCount">0</span></h4>
-    <div id="playerListContent"></div>
-  </div>
-
+  <div id="playerList"><h4>Oyuncular <span id="pCount">0</span></h4><div id="playerListContent"></div></div>
   <div id="topBar">
-    <div id="onlineCount">Çevrimiçi: 0</div>
-    <div class="vol-btn" id="volBtn" onclick="toggleMute()">🔊</div>
+    <div class="hud-pill" id="onlineCount">Çevrimiçi: 0</div>
+    <div class="icon-btn" id="micBtn" title="Mikrofon">🎤</div>
+    <div class="icon-btn" id="volBtn" title="Ses">🔊</div>
+    <div class="icon-btn" id="settingsBtn" title="Ayarlar">⚙️</div>
   </div>
-
+  <div id="voiceIndicator">Sesin açık • Konuşuluyor</div>
   <div id="inputArea">
-    <input type="text" id="chatInput" placeholder="Mesaj yaz... (/help)" autocomplete="off">
+    <input type="text" id="chatInput" placeholder="Mesaj / komut yaz... (/help)" autocomplete="off">
     <button id="sendBtn" onclick="sendMsg()">➤</button>
   </div>
-
-  <!-- Joystick -->
-  <div id="joystickArea">
-    <div id="joystickBase">
-      <div id="joystickKnob"></div>
-    </div>
-  </div>
-
-  <!-- Aksiyon butonları -->
+  <div id="joystickArea"><div id="joystickBase"><div id="joystickKnob"></div></div></div>
   <div id="actionButtons">
-    <div class="action-btn" id="btnVent" title="Vent">🌀</div>
-    <div class="action-btn" id="btnSprint" title="Sprint">💨</div>
-    <div class="action-btn" id="btnEmote" title="Emote">😎</div>
+    <div class="action-btn" id="btnVent">🌀</div>
+    <div class="action-btn" id="btnSprint">💨</div>
+    <div class="action-btn" id="btnEmote">😎</div>
   </div>
-
-  <!-- Vent Menüsü -->
   <div id="ventMenu">
-    <h3>Vent Seç</h3>
+    <h3>🌀 Vent Ağı</h3>
     <div id="ventButtons"></div>
-    <button class="vent-btn" id="closeVent">Çık / İptal</button>
+    <button class="vent-btn" id="closeVent">İptal / Çık</button>
   </div>
-
-  <!-- Minimap -->
-  <div id="minimap">
-    <canvas id="minimapCanvas"></canvas>
+  <div id="minimap"><canvas id="minimapCanvas"></canvas></div>
+  <div id="settingsPanel">
+    <h3>Ayarlar</h3>
+    <div class="setting-row"><span>Oyun Sesi</span><input type="range" id="sfxVol" min="0" max="1" step="0.05" value="0.35"></div>
+    <div class="setting-row"><span>Mikrofon</span><input type="range" id="micVol" min="0" max="1" step="0.05" value="0.8"></div>
+    <div class="setting-row"><span>Proximity Voice</span><span id="proxStatus">Açık</span></div>
+    <button class="btn" style="margin-top:12px" onclick="document.getElementById('settingsPanel').style.display='none'">Kapat</button>
   </div>
 </div>
 
@@ -247,43 +125,45 @@ const mctx = minimapCanvas.getContext('2d');
 const chatInput = document.getElementById('chatInput');
 const chatLogBox = document.getElementById('chatLogBox');
 
-let gameState = null;
-let myId = null;
-let camera = { x: 0, y: 0 };
+let gameState = null, myId = null;
+let camera = {x:0,y:0};
 let keys = {};
 let particles = [];
 let playerTrails = {};
-let vents = [];
-let walls = [];
-let muted = false;
-let nearVentId = null;
+let vents = [], walls = [], mapSize = {width:3200,height:3200};
+let muted = false, micEnabled = false, localStream = null;
+let peers = {}; // WebRTC
+let inputDx = 0, inputDy = 0;
 let isSprinting = false;
+let nearVentId = null;
+let sfxVolume = 0.35;
 
 // Sesler
 const sfx = {
   msg: new Audio('https://cdn.pixabay.com/download/audio/2022/03/24/audio_5b87c2830e.mp3?filename=click-button-140881.mp3'),
   join: new Audio('https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c7443c.mp3?filename=success-1-6297.mp3'),
   leave: new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_7b6d0c0b3e.mp3?filename=interface-124464.mp3'),
-  vent: new Audio('https://cdn.pixabay.com/download/audio/2022/03/24/audio_5b87c2830e.mp3?filename=click-button-140881.mp3')
+  vent: new Audio('https://cdn.pixabay.com/download/audio/2022/03/24/audio_5b87c2830e.mp3?filename=click-button-140881.mp3'),
+  power: new Audio('https://cdn.pixabay.com/download/audio/2022/03/24/audio_5b87c2830e.mp3?filename=click-button-140881.mp3')
 };
-Object.values(sfx).forEach(a => { a.volume = 0.35; a.preload = 'auto'; });
+Object.values(sfx).forEach(a => { a.volume = sfxVolume; a.preload = 'auto'; });
 
 function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  minimapCanvas.width = 140;
-  minimapCanvas.height = 140;
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+  minimapCanvas.width = 130;
+  minimapCanvas.height = 130;
 }
-window.addEventListener('resize', resize);
+addEventListener('resize', resize);
 resize();
 
-// Parçacıklar
-for (let i = 0; i < 120; i++) {
+for (let i = 0; i < 140; i++) {
   particles.push({
-    x: Math.random() * 3000,
-    y: Math.random() * 3000,
-    size: Math.random() * 1.8 + 0.5,
-    speed: Math.random() * 0.4 + 0.1
+    x: Math.random() * 3200,
+    y: Math.random() * 3200,
+    size: Math.random() * 1.6 + 0.4,
+    speed: Math.random() * 0.35 + 0.08,
+    alpha: Math.random() * 0.5 + 0.2
   });
 }
 
@@ -291,58 +171,54 @@ function joinGame() {
   const name = document.getElementById('username').value.trim() || 'Oyuncu';
   const color = document.getElementById('colorSelect').value;
   socket.emit('joinGame', { name, color });
-
   document.getElementById('menuUI').style.opacity = '0';
   setTimeout(() => {
     document.getElementById('menuUI').style.display = 'none';
     document.getElementById('gameArea').style.display = 'block';
     requestAnimationFrame(gameLoop);
-  }, 400);
+    initVoice();
+  }, 380);
 }
 
-// Socket
-socket.on('connect', () => { myId = socket.id; });
-socket.on('init', (data) => {
-  vents = data.vents || [];
-  walls = data.walls || [];
+// ========== SOCKET ==========
+socket.on('connect', () => myId = socket.id);
+socket.on('init', d => {
+  vents = d.vents || [];
+  walls = d.walls || [];
+  mapSize = d.map || mapSize;
 });
-socket.on('gameState', (state) => {
-  gameState = state;
+socket.on('gameState', s => {
+  gameState = s;
   updatePlayerList();
 });
-socket.on('playSound', (type) => {
-  if (!muted && sfx[type]) sfx[type].currentTime = 0, sfx[type].play().catch(()=>{});
-});
-socket.on('playCustomSound', (url) => {
+socket.on('playSound', t => { if (!muted && sfx[t]) { sfx[t].currentTime = 0; sfx[t].play().catch(()=>{}); } });
+socket.on('playCustomSound', url => {
   if (muted) return;
-  try {
-    const a = new Audio(url);
-    a.volume = 0.45;
-    a.play().catch(()=>{});
-  } catch(e) {}
+  try { const a = new Audio(url); a.volume = sfxVolume; a.play().catch(()=>{}); } catch(e){}
 });
-socket.on('newChatMessage', (data) => {
+socket.on('newChatMessage', d => {
   const div = document.createElement('div');
   div.className = 'log-msg';
-  div.innerHTML = `<span style="color:${data.color};font-weight:600">${data.name}</span> <span style="opacity:0.5;font-size:11px">${data.time||''}</span><br>${escapeHtml(data.text)}`;
+  div.innerHTML = `<span style="color:${d.color};font-weight:600">${d.name}</span> <span style="opacity:.45;font-size:11px">${d.time||''}</span><br>${esc(d.text)}`;
   chatLogBox.appendChild(div);
   chatLogBox.scrollTop = chatLogBox.scrollHeight;
 });
-socket.on('serverMessage', (msg) => {
+socket.on('serverMessage', msg => {
   const div = document.createElement('div');
   div.className = 'sys-msg';
   div.textContent = msg;
   chatLogBox.appendChild(div);
   chatLogBox.scrollTop = chatLogBox.scrollHeight;
 });
-socket.on('playerCount', (n) => {
+socket.on('playerCount', n => {
   document.getElementById('onlineCount').textContent = `Çevrimiçi: ${n}`;
   document.getElementById('pCount').textContent = n;
 });
+socket.on('powerupTaken', type => {
+  if (!muted && sfx.power) sfx.power.play().catch(()=>{});
+});
 
-function escapeHtml(t) {
-  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+function esc(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function updatePlayerList() {
   if (!gameState) return;
@@ -351,117 +227,181 @@ function updatePlayerList() {
   for (const id in gameState.players) {
     const p = gameState.players[id];
     const d = document.createElement('div');
-    d.style.marginBottom = '4px';
-    d.innerHTML = `<span style="color:${p.color}">●</span> ${p.name}${p.inVent ? ' 🌀' : ''}`;
+    d.style.marginBottom = '3px';
+    let extra = '';
+    if (p.inVent) extra = ' 🌀';
+    if (p.ghostUntil > Date.now()) extra += ' 👻';
+    if (p.speedUntil > Date.now()) extra += ' 💨';
+    d.innerHTML = `<span style="color:${p.color}">●</span> ${p.name}${extra}`;
     el.appendChild(d);
   }
 }
 
-// Kontroller
-window.addEventListener('keydown', e => {
+// ========== VOICE (WebRTC Proximity) ==========
+async function initVoice() {
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    localStream.getAudioTracks()[0].enabled = false; // başlangıçta kapalı
+    socket.emit('voice-join');
+    document.getElementById('micBtn').classList.remove('active');
+  } catch (e) {
+    console.warn('Mic izni yok', e);
+    document.getElementById('micBtn').textContent = '🎤🚫';
+  }
+}
+
+socket.on('voice-ready', () => {});
+socket.on('voice-peer', async (peerId) => {
+  if (peers[peerId] || peerId === myId) return;
+  createPeer(peerId, true);
+});
+socket.on('voice-offer', async ({ from, offer }) => {
+  if (!peers[from]) createPeer(from, false);
+  const pc = peers[from];
+  await pc.setRemoteDescription(offer);
+  const answer = await pc.createAnswer();
+  await pc.setLocalDescription(answer);
+  socket.emit('voice-answer', { to: from, answer });
+});
+socket.on('voice-answer', async ({ from, answer }) => {
+  if (peers[from]) await peers[from].setRemoteDescription(answer);
+});
+socket.on('voice-ice', async ({ from, candidate }) => {
+  if (peers[from] && candidate) {
+    try { await peers[from].addIceCandidate(candidate); } catch(e){}
+  }
+});
+socket.on('voice-leave', (id) => {
+  if (peers[id]) {
+    peers[id].close();
+    delete peers[id];
+  }
+});
+
+function createPeer(peerId, initiator) {
+  const pc = new RTCPeerConnection({
+    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+  });
+  peers[peerId] = pc;
+
+  if (localStream) {
+    localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+  }
+
+  pc.onicecandidate = (e) => {
+    if (e.candidate) socket.emit('voice-ice', { to: peerId, candidate: e.candidate });
+  };
+
+  pc.ontrack = (e) => {
+    const audio = new Audio();
+    audio.srcObject = e.streams[0];
+    audio.autoplay = true;
+    audio.volume = 0.8;
+    // Proximity volume ayarı gameLoop'ta yapılacak
+    audio.dataset.peerId = peerId;
+    document.body.appendChild(audio);
+  };
+
+  if (initiator) {
+    pc.createOffer().then(offer => {
+      pc.setLocalDescription(offer);
+      socket.emit('voice-offer', { to: peerId, offer });
+    });
+  }
+}
+
+// Mic toggle
+document.getElementById('micBtn').onclick = () => {
+  if (!localStream) return;
+  micEnabled = !micEnabled;
+  localStream.getAudioTracks()[0].enabled = micEnabled;
+  document.getElementById('micBtn').classList.toggle('active', micEnabled);
+  document.getElementById('micBtn').textContent = micEnabled ? '🎤' : '🎤';
+  document.getElementById('voiceIndicator').style.display = micEnabled ? 'block' : 'none';
+};
+
+document.getElementById('volBtn').onclick = () => {
+  muted = !muted;
+  document.getElementById('volBtn').textContent = muted ? '🔇' : '🔊';
+  document.getElementById('volBtn').classList.toggle('active', muted);
+};
+
+document.getElementById('settingsBtn').onclick = () => {
+  const p = document.getElementById('settingsPanel');
+  p.style.display = p.style.display === 'block' ? 'none' : 'block';
+};
+
+document.getElementById('sfxVol').oninput = (e) => {
+  sfxVolume = parseFloat(e.target.value);
+  Object.values(sfx).forEach(a => a.volume = sfxVolume);
+};
+
+// ========== KONTROLLER ==========
+addEventListener('keydown', e => {
   if (document.activeElement === chatInput) {
     if (e.key === 'Enter') sendMsg();
     socket.emit('typing', true);
     return;
   }
   keys[e.key.toLowerCase()] = true;
-  if (e.key === 'Shift') {
-    isSprinting = true;
-    socket.emit('sprint', true);
-  }
-  if (e.key.toLowerCase() === 'e' || e.key === ' ') tryEnterVent();
+  if (e.key === 'Shift') isSprinting = true;
+  if (e.key.toLowerCase() === 'e' || e.key === ' ') tryVent();
 });
-window.addEventListener('keyup', e => {
+addEventListener('keyup', e => {
   if (document.activeElement === chatInput) {
     socket.emit('typing', false);
     return;
   }
   delete keys[e.key.toLowerCase()];
-  if (e.key === 'Shift') {
-    isSprinting = false;
-    socket.emit('sprint', false);
-  }
+  if (e.key === 'Shift') isSprinting = false;
 });
 
 // Joystick
 const base = document.getElementById('joystickBase');
 const knob = document.getElementById('joystickKnob');
 let joyActive = false;
-let joyCenter = { x: 0, y: 0 };
 
-function getTouchPos(e) {
+function getPos(e) {
   const t = e.touches ? e.touches[0] : e;
-  const rect = base.getBoundingClientRect();
-  return { x: t.clientX - rect.left, y: t.clientY - rect.top };
+  const r = base.getBoundingClientRect();
+  return { x: t.clientX - r.left, y: t.clientY - r.top };
 }
-
-base.addEventListener('touchstart', e => {
-  e.preventDefault();
-  joyActive = true;
-  const pos = getTouchPos(e);
-  joyCenter = { x: 65, y: 65 };
-  moveKnob(pos);
-}, { passive: false });
-
-base.addEventListener('touchmove', e => {
-  e.preventDefault();
-  if (!joyActive) return;
-  moveKnob(getTouchPos(e));
-}, { passive: false });
-
+base.addEventListener('touchstart', e => { e.preventDefault(); joyActive = true; moveKnob(getPos(e)); }, {passive:false});
+base.addEventListener('touchmove', e => { e.preventDefault(); if (joyActive) moveKnob(getPos(e)); }, {passive:false});
 base.addEventListener('touchend', e => {
   e.preventDefault();
   joyActive = false;
-  knob.style.transform = 'translate(-50%, -50%)';
-  keys.w = keys.a = keys.s = keys.d = false;
-}, { passive: false });
+  knob.style.transform = 'translate(-50%,-50%)';
+  inputDx = inputDy = 0;
+}, {passive:false});
 
 function moveKnob(pos) {
-  let dx = pos.x - 65;
-  let dy = pos.y - 65;
-  const max = 40;
-  const dist = Math.hypot(dx, dy);
-  if (dist > max) {
-    dx = (dx / dist) * max;
-    dy = (dy / dist) * max;
-  }
+  let dx = pos.x - 67.5, dy = pos.y - 67.5;
+  const max = 42, dist = Math.hypot(dx, dy);
+  if (dist > max) { dx = dx/dist*max; dy = dy/dist*max; }
   knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-
-  // Yönleri belirle
-  keys.w = dy < -15;
-  keys.s = dy > 15;
-  keys.a = dx < -15;
-  keys.d = dx > 15;
+  inputDx = dx / max;
+  inputDy = dy / max;
 }
 
 // Aksiyon butonları
-document.getElementById('btnVent').addEventListener('touchstart', e => {
-  e.preventDefault();
-  tryEnterVent();
-});
-document.getElementById('btnSprint').addEventListener('touchstart', e => {
-  e.preventDefault();
-  isSprinting = true;
-  socket.emit('sprint', true);
-});
-document.getElementById('btnSprint').addEventListener('touchend', e => {
-  e.preventDefault();
-  isSprinting = false;
-  socket.emit('sprint', false);
-});
-document.getElementById('btnEmote').addEventListener('touchstart', e => {
-  e.preventDefault();
-  socket.emit('chat', '/emote 😎');
-});
+document.getElementById('btnVent').addEventListener('touchstart', e => { e.preventDefault(); tryVent(); });
+document.getElementById('btnSprint').addEventListener('touchstart', e => { e.preventDefault(); isSprinting = true; document.getElementById('btnSprint').classList.add('active'); });
+document.getElementById('btnSprint').addEventListener('touchend', e => { e.preventDefault(); isSprinting = false; document.getElementById('btnSprint').classList.remove('active'); });
+document.getElementById('btnEmote').addEventListener('touchstart', e => { e.preventDefault(); socket.emit('chat', '/emote 😎'); });
 
-// Hareket gönder
+// Input gönder (akıcı)
 setInterval(() => {
   if (document.activeElement === chatInput) return;
-  if (keys.w || keys.arrowup) socket.emit('move', 'UP');
-  if (keys.s || keys.arrowdown) socket.emit('move', 'DOWN');
-  if (keys.a || keys.arrowleft) socket.emit('move', 'LEFT');
-  if (keys.d || keys.arrowright) socket.emit('move', 'RIGHT');
-}, 28);
+  let dx = inputDx, dy = inputDy;
+  if (keys.w || keys.arrowup) dy = -1;
+  if (keys.s || keys.arrowdown) dy = 1;
+  if (keys.a || keys.arrowleft) dx = -1;
+  if (keys.d || keys.arrowright) dx = 1;
+
+  // Sprint çarpanı server'da maxSpeed ile yönetiliyor, burada sadece yön
+  socket.emit('input', { dx, dy });
+}, 1000 / 60);
 
 function sendMsg() {
   const v = chatInput.value.trim();
@@ -472,25 +412,18 @@ function sendMsg() {
   }
 }
 
-function toggleMute() {
-  muted = !muted;
-  document.getElementById('volBtn').textContent = muted ? '🔇' : '🔊';
-}
-
-// ===== VENT SİSTEMİ =====
-function tryEnterVent() {
+// ===== VENT =====
+function tryVent() {
   if (!gameState || !gameState.players[myId]) return;
   const me = gameState.players[myId];
   if (me.inVent) {
-    // menüyü aç
     openVentMenu(me.ventId);
     return;
   }
-  // yakındaki vent'i bul
   for (const v of vents) {
-    if (Math.hypot(me.x - v.x, me.y - v.y) < 75) {
+    if (Math.hypot(me.x - v.x, me.y - v.y) < 85) {
       socket.emit('enterVent', v.id);
-      openVentMenu(v.id);
+      setTimeout(() => openVentMenu(v.id), 120);
       return;
     }
   }
@@ -502,29 +435,26 @@ function openVentMenu(currentId) {
   container.innerHTML = '';
   const current = vents.find(v => v.id === currentId);
   if (!current) return;
-
   current.connections.forEach(cid => {
     const btn = document.createElement('button');
     btn.className = 'vent-btn';
-    btn.textContent = `Vent #${cid}`;
+    btn.textContent = `Vent #${cid}  →`;
     btn.onclick = () => {
       socket.emit('exitVent', cid);
       menu.style.display = 'none';
     };
     container.appendChild(btn);
   });
-
   menu.style.display = 'block';
 }
-
 document.getElementById('closeVent').onclick = () => {
   socket.emit('leaveVent');
   document.getElementById('ventMenu').style.display = 'none';
 };
 
-// ===== ÇİZİM =====
+// ========== ÇİZİM ==========
 function gameLoop() {
-  ctx.fillStyle = '#0a0a12';
+  ctx.fillStyle = '#07070f';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   if (!gameState || !gameState.players[myId]) {
@@ -533,67 +463,84 @@ function gameLoop() {
   }
 
   const me = gameState.players[myId];
+  const now = Date.now();
 
-  // Kamera
-  camera.x += (me.x - canvas.width / 2 - camera.x) * 0.12;
-  camera.y += (me.y - canvas.height / 2 - camera.y) * 0.12;
+  // Kamera yumuşak takip
+  camera.x += (me.x - canvas.width/2 - camera.x) * 0.14;
+  camera.y += (me.y - canvas.height/2 - camera.y) * 0.14;
 
   ctx.save();
   ctx.translate(-camera.x, -camera.y);
 
   // Izgara
-  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.strokeStyle = 'rgba(255,255,255,0.035)';
   ctx.lineWidth = 1;
-  for (let x = 0; x <= gameState.map.width; x += 100) {
-    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, gameState.map.height); ctx.stroke();
+  for (let x = 0; x <= mapSize.width; x += 100) {
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x, mapSize.height); ctx.stroke();
   }
-  for (let y = 0; y <= gameState.map.height; y += 100) {
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(gameState.map.width, y); ctx.stroke();
+  for (let y = 0; y <= mapSize.height; y += 100) {
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(mapSize.width, y); ctx.stroke();
   }
 
   // Duvarlar
-  ctx.fillStyle = 'rgba(80,80,120,0.7)';
   walls.forEach(w => {
+    ctx.fillStyle = 'rgba(70,70,110,0.75)';
     ctx.fillRect(w.x, w.y, w.w, w.h);
-    ctx.strokeStyle = 'rgba(150,150,255,0.4)';
+    ctx.strokeStyle = 'rgba(140,140,255,0.35)';
     ctx.strokeRect(w.x, w.y, w.w, w.h);
   });
 
+  // Power-up'lar
+  if (gameState.powerups) {
+    gameState.powerups.forEach(pu => {
+      if (!pu.active) return;
+      const pulse = 1 + Math.sin(now / 200) * 0.15;
+      ctx.beginPath();
+      ctx.arc(pu.x, pu.y, 16 * pulse, 0, Math.PI*2);
+      const colors = { speed: '#00ff9d', glow: '#ff00c8', ghost: '#a0a0ff' };
+      ctx.fillStyle = colors[pu.type] || '#fff';
+      ctx.globalAlpha = 0.7;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.font = '14px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(pu.type === 'speed' ? '💨' : pu.type === 'glow' ? '✨' : '👻', pu.x, pu.y + 5);
+    });
+  }
+
   // Parçacıklar
-  ctx.fillStyle = 'rgba(255,255,255,0.45)';
   particles.forEach(p => {
     p.y -= p.speed;
-    if (p.y < 0) p.y = gameState.map.height;
+    if (p.y < 0) p.y = mapSize.height;
+    ctx.globalAlpha = p.alpha;
+    ctx.fillStyle = '#fff';
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
     ctx.fill();
   });
+  ctx.globalAlpha = 1;
 
   // Ventler
   vents.forEach(v => {
+    const dist = me ? Math.hypot(me.x - v.x, me.y - v.y) : 999;
     ctx.beginPath();
-    ctx.arc(v.x, v.y, 28, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(0, 200, 255, 0.25)';
+    ctx.arc(v.x, v.y, 30, 0, Math.PI*2);
+    ctx.fillStyle = dist < 85 ? 'rgba(0,230,255,0.35)' : 'rgba(0,180,255,0.18)';
     ctx.fill();
     ctx.strokeStyle = '#00e5ff';
     ctx.lineWidth = 3;
     ctx.stroke();
-
-    // ızgara detayı
+    // Izgara
     ctx.beginPath();
-    ctx.moveTo(v.x - 18, v.y);
-    ctx.lineTo(v.x + 18, v.y);
-    ctx.moveTo(v.x, v.y - 18);
-    ctx.lineTo(v.x, v.y + 18);
-    ctx.strokeStyle = 'rgba(0,255,255,0.6)';
+    ctx.moveTo(v.x-16, v.y); ctx.lineTo(v.x+16, v.y);
+    ctx.moveTo(v.x, v.y-16); ctx.lineTo(v.x, v.y+16);
+    ctx.strokeStyle = 'rgba(0,255,255,0.7)';
     ctx.lineWidth = 2;
     ctx.stroke();
-
-    // yakınsa vurgu
-    if (me && Math.hypot(me.x - v.x, me.y - v.y) < 75 && !me.inVent) {
+    if (dist < 85 && !me.inVent) {
       ctx.beginPath();
-      ctx.arc(v.x, v.y, 38, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(0,255,255,0.8)';
+      ctx.arc(v.x, v.y, 42, 0, Math.PI*2);
+      ctx.strokeStyle = 'rgba(0,255,255,0.85)';
       ctx.lineWidth = 2;
       ctx.stroke();
       nearVentId = v.id;
@@ -603,121 +550,155 @@ function gameLoop() {
   // Oyuncular
   for (const id in gameState.players) {
     const p = gameState.players[id];
-    if (p.inVent) continue; // vent içinde görünmez
+    if (p.inVent) continue;
+
+    const isGhost = p.ghostUntil > now;
+    const isGlow = p.glowUntil > now;
+    const isSpeed = p.speedUntil > now;
 
     // Trail
     if (!playerTrails[id]) playerTrails[id] = [];
-    playerTrails[id].push({ x: p.x, y: p.y });
-    if (playerTrails[id].length > 12) playerTrails[id].shift();
+    playerTrails[id].push({x: p.x, y: p.y});
+    if (playerTrails[id].length > 14) playerTrails[id].shift();
 
     for (let i = 0; i < playerTrails[id].length; i++) {
       const t = playerTrails[id][i];
-      const alpha = (i / playerTrails[id].length) * 0.25;
+      const a = (i / playerTrails[id].length) * (isGhost ? 0.12 : 0.28);
       ctx.beginPath();
-      ctx.arc(t.x, t.y, 18 * (i / playerTrails[id].length), 0, Math.PI * 2);
+      ctx.arc(t.x, t.y, 17 * (i / playerTrails[id].length), 0, Math.PI*2);
       ctx.fillStyle = p.color;
-      ctx.globalAlpha = alpha;
+      ctx.globalAlpha = a;
       ctx.fill();
     }
-    ctx.globalAlpha = 1;
+    ctx.globalAlpha = isGhost ? 0.35 : 1;
 
     // Gövde
     ctx.beginPath();
-    ctx.arc(p.x, p.y, 26, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, 27, 0, Math.PI*2);
     ctx.fillStyle = p.color;
-    ctx.shadowBlur = 22;
+    ctx.shadowBlur = isGlow ? 35 : 20;
     ctx.shadowColor = p.color;
     ctx.fill();
     ctx.shadowBlur = 0;
 
-    // Cam efekti
+    // Cam
     ctx.beginPath();
-    ctx.arc(p.x - 7, p.y - 7, 9, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.arc(p.x - 7, p.y - 8, 9, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,255,255,0.38)';
     ctx.fill();
+
+    ctx.globalAlpha = 1;
 
     // İsim
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 14px Poppins';
     ctx.textAlign = 'center';
-    ctx.fillText(p.name, p.x, p.y + 48);
+    ctx.fillText(p.name, p.x, p.y + 50);
 
-    // Yazıyor
+    // Status ikonları
+    let statusY = p.y - 48;
+    if (isSpeed) { ctx.font = '16px Arial'; ctx.fillText('💨', p.x - 18, statusY); }
+    if (isGlow) { ctx.font = '16px Arial'; ctx.fillText('✨', p.x + 18, statusY); }
+    if (isGhost) { ctx.font = '16px Arial'; ctx.fillText('👻', p.x, statusY - 18); }
+
     if (p.isTyping && !p.msg) {
       ctx.fillStyle = 'rgba(255,255,255,0.7)';
       ctx.font = 'italic 12px Poppins';
-      ctx.fillText('yazıyor...', p.x, p.y - 40);
+      ctx.fillText('yazıyor...', p.x, p.y - 42);
     }
 
-    // Emote
     if (p.emote) {
-      ctx.font = '28px Arial';
-      ctx.fillText(p.emote, p.x, p.y - 50);
+      ctx.font = '30px Arial';
+      ctx.fillText(p.emote, p.x, p.y - 55);
     }
 
-    // Mesaj balonu
     if (p.msg) {
       ctx.font = '13px Poppins';
-      const w = ctx.measureText(p.msg).width + 24;
-      ctx.fillStyle = 'rgba(255,255,255,0.92)';
-      roundRect(ctx, p.x - w / 2, p.y - 78, w, 32, 10);
+      const w = ctx.measureText(p.msg).width + 26;
+      ctx.fillStyle = 'rgba(255,255,255,0.93)';
+      roundRect(ctx, p.x - w/2, p.y - 82, w, 34, 11);
       ctx.fill();
       ctx.beginPath();
-      ctx.moveTo(p.x - 8, p.y - 46);
-      ctx.lineTo(p.x + 8, p.y - 46);
-      ctx.lineTo(p.x, p.y - 36);
+      ctx.moveTo(p.x-8, p.y-48); ctx.lineTo(p.x+8, p.y-48); ctx.lineTo(p.x, p.y-38);
       ctx.fill();
       ctx.fillStyle = '#111';
-      ctx.fillText(p.msg, p.x, p.y - 57);
+      ctx.fillText(p.msg, p.x, p.y - 60);
     }
   }
 
   ctx.restore();
 
-  // Minimap çiz
-  drawMinimap();
+  // Proximity voice volume ayarı
+  updateVoiceVolumes(me);
 
+  drawMinimap();
   requestAnimationFrame(gameLoop);
+}
+
+function updateVoiceVolumes(me) {
+  if (!gameState || !me) return;
+  document.querySelectorAll('audio[data-peer-id]').forEach(audio => {
+    const pid = audio.dataset.peerId;
+    const p = gameState.players[pid];
+    if (!p || p.inVent) {
+      audio.volume = 0;
+      return;
+    }
+    const dist = Math.hypot(me.x - p.x, me.y - p.y);
+    // 0-600 birim arası proximity
+    let vol = 1 - (dist / 700);
+    vol = Math.max(0, Math.min(1, vol));
+    audio.volume = vol * 0.85;
+  });
 }
 
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
+  ctx.moveTo(x+r, y);
+  ctx.arcTo(x+w, y, x+w, y+h, r);
+  ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r);
+  ctx.arcTo(x, y, x+w, y, r);
   ctx.closePath();
 }
 
 function drawMinimap() {
   if (!gameState) return;
-  mctx.fillStyle = 'rgba(10,10,20,0.9)';
-  mctx.fillRect(0, 0, 140, 140);
-
-  const scaleX = 140 / gameState.map.width;
-  const scaleY = 140 / gameState.map.height;
+  mctx.fillStyle = 'rgba(8,8,16,0.92)';
+  mctx.fillRect(0, 0, 130, 130);
+  const sx = 130 / mapSize.width;
+  const sy = 130 / mapSize.height;
 
   // Ventler
   mctx.fillStyle = '#00e5ff';
   vents.forEach(v => {
     mctx.beginPath();
-    mctx.arc(v.x * scaleX, v.y * scaleY, 3, 0, Math.PI * 2);
+    mctx.arc(v.x * sx, v.y * sy, 3.5, 0, Math.PI*2);
     mctx.fill();
   });
+
+  // Powerups
+  if (gameState.powerups) {
+    gameState.powerups.forEach(pu => {
+      if (!pu.active) return;
+      mctx.fillStyle = '#ff0';
+      mctx.beginPath();
+      mctx.arc(pu.x * sx, pu.y * sy, 2.5, 0, Math.PI*2);
+      mctx.fill();
+    });
+  }
 
   // Oyuncular
   for (const id in gameState.players) {
     const p = gameState.players[id];
     if (p.inVent) continue;
     mctx.beginPath();
-    mctx.arc(p.x * scaleX, p.y * scaleY, id === myId ? 4 : 3, 0, Math.PI * 2);
+    mctx.arc(p.x * sx, p.y * sy, id === myId ? 4.5 : 3, 0, Math.PI*2);
     mctx.fillStyle = id === myId ? '#fff' : p.color;
     mctx.fill();
   }
 }
 
-// Yardım
 chatInput.addEventListener('focus', () => socket.emit('typing', true));
 chatInput.addEventListener('blur', () => socket.emit('typing', false));
 </script>
