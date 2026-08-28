@@ -3,68 +3,57 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Neon Sohbet v3 • Voice + Vents</title>
+<title>Neon Arena v4</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
-body{background:#07070f;color:#fff;font-family:'Poppins',sans-serif;overflow:hidden;touch-action:none;user-select:none}
-#menuUI{position:fixed;inset:0;background:radial-gradient(circle at 50% 40%,#1a1428 0%,#05050c 100%);display:flex;align-items:center;justify-content:center;z-index:200;transition:opacity .4s}
-.box{background:rgba(255,255,255,.06);padding:36px 30px;border-radius:26px;border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(22px);width:90%;max-width:390px;text-align:center;box-shadow:0 30px 70px rgba(0,0,0,.65)}
-h1{font-weight:800;font-size:2.3rem;background:linear-gradient(90deg,#00fff5,#ff00c8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
-.sub{color:#777;font-size:13px;margin-bottom:22px}
-input,select{width:100%;padding:14px 16px;margin-bottom:13px;background:rgba(0,0,0,.5);border:2px solid #333;color:#fff;border-radius:13px;font-size:16px;font-family:'Poppins';outline:none}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#06060e;color:#fff;font-family:'Poppins',sans-serif;overflow:hidden;touch-action:none;user-select:none}
+#menuUI{position:fixed;inset:0;background:radial-gradient(circle at 50% 30%,#1b1429 0%,#04040a 100%);display:flex;align-items:center;justify-content:center;z-index:300;transition:opacity .4s}
+.box{background:rgba(255,255,255,.06);padding:34px 28px;border-radius:24px;border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(20px);width:90%;max-width:380px;text-align:center}
+h1{font-weight:800;font-size:2.2rem;background:linear-gradient(90deg,#00fff5,#ff00c8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.sub{color:#777;font-size:12px;margin-bottom:20px}
+input,select{width:100%;padding:13px 15px;margin-bottom:12px;background:rgba(0,0,0,.5);border:2px solid #333;color:#fff;border-radius:12px;font-size:15px;font-family:inherit;outline:none}
 input:focus,select:focus{border-color:#00fff5}
-.btn{width:100%;padding:15px;border:none;border-radius:13px;background:linear-gradient(45deg,#00fff5,#0066ff);color:#fff;font-weight:700;font-size:16px;letter-spacing:1px;cursor:pointer;text-transform:uppercase}
-.btn:active{transform:scale(.97)}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(45deg,#00fff5,#0066ff);color:#fff;font-weight:700;font-size:15px;cursor:pointer;text-transform:uppercase}
 #gameArea{display:none;width:100vw;height:100vh;position:relative}
 canvas{display:block;width:100%;height:100%}
-#chatLogBox{position:absolute;top:12px;left:12px;width:min(290px,68vw);height:175px;background:rgba(0,0,0,.58);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px;overflow-y:auto;font-size:13px;backdrop-filter:blur(10px);z-index:20;pointer-events:auto}
-.log-msg{background:rgba(255,255,255,.07);padding:6px 10px;border-radius:8px;margin-bottom:5px;word-break:break-word}
-.sys-msg{color:#ffeb3b;font-style:italic;font-size:12px;margin-bottom:4px}
-#playerList{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.58);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 12px;font-size:12px;backdrop-filter:blur(10px);z-index:20;max-height:190px;overflow-y:auto;min-width:140px}
-#playerList h4{margin:0 0 6px;font-size:13px;color:#00fff5}
-#inputArea{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:92%;max-width:540px;display:flex;gap:8px;z-index:30}
-#chatInput{flex:1;padding:13px 18px;border-radius:24px;border:2px solid rgba(255,255,255,.18);background:rgba(0,0,0,.78);color:#fff;font-size:15px;outline:none}
-#sendBtn{padding:0 18px;border-radius:24px;border:none;background:linear-gradient(45deg,#00fff5,#0066ff);color:#fff;font-weight:700;font-size:18px}
-#joystickArea{position:absolute;bottom:105px;left:18px;width:135px;height:135px;z-index:40;display:none}
-#joystickBase{width:135px;height:135px;border-radius:50%;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.22);position:relative}
-#joystickKnob{width:56px;height:56px;border-radius:50%;background:rgba(0,255,245,.75);border:2px solid #fff;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;transition:transform .05s linear}
-#actionButtons{position:absolute;bottom:105px;right:16px;display:none;flex-direction:column;gap:11px;z-index:40}
-.action-btn{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.11);border:2px solid rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff}
-.action-btn:active,.action-btn.active{background:rgba(0,255,245,.4);border-color:#00fff5}
-#ventMenu{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(8,8,18,.96);border:2px solid #00fff5;border-radius:20px;padding:22px;z-index:80;display:none;text-align:center;min-width:260px;box-shadow:0 0 40px rgba(0,255,245,.25)}
-#ventMenu h3{margin:0 0 14px;color:#00fff5;font-size:18px}
-.vent-btn{display:block;width:100%;margin:7px 0;padding:13px;background:rgba(0,255,245,.12);border:1px solid #00fff5;border-radius:11px;color:#fff;font-size:14px;cursor:pointer}
-.vent-btn:active{background:rgba(0,255,245,.3)}
-#closeVent{margin-top:12px;background:rgba(255,60,60,.18);border-color:#ff5555}
-#minimap{position:absolute;bottom:105px;right:16px;width:130px;height:130px;background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.18);border-radius:14px;z-index:25;display:none;overflow:hidden}
-#minimapCanvas{width:100%;height:100%}
-#topBar{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:25;align-items:center}
-.hud-pill{background:rgba(0,0,0,.55);padding:6px 13px;border-radius:20px;font-size:12px;border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:6px}
-.icon-btn{width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+#chatLogBox{position:absolute;top:10px;left:10px;width:min(280px,65vw);height:160px;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:8px;overflow-y:auto;font-size:12px;z-index:20;backdrop-filter:blur(8px)}
+.log-msg{background:rgba(255,255,255,.07);padding:5px 8px;border-radius:7px;margin-bottom:4px;word-break:break-word}
+.sys-msg{color:#ffeb3b;font-style:italic;font-size:11px;margin-bottom:3px}
+#playerList{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:8px 10px;font-size:11px;z-index:20;max-height:170px;overflow-y:auto;min-width:130px}
+#playerList h4{margin:0 0 5px;color:#00fff5;font-size:12px}
+#inputArea{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:92%;max-width:520px;display:flex;gap:6px;z-index:30}
+#chatInput{flex:1;padding:12px 16px;border-radius:22px;border:2px solid rgba(255,255,255,.18);background:rgba(0,0,0,.8);color:#fff;font-size:14px;outline:none}
+#sendBtn{padding:0 16px;border-radius:22px;border:none;background:linear-gradient(45deg,#00fff5,#0066ff);color:#fff;font-weight:700}
+#joystickArea{position:absolute;bottom:95px;left:14px;width:130px;height:130px;z-index:40;display:none}
+#joystickBase{width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.2);position:relative}
+#joystickKnob{width:52px;height:52px;border-radius:50%;background:rgba(0,255,245,.75);border:2px solid #fff;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+#actionButtons{position:absolute;bottom:95px;right:12px;display:none;flex-direction:column;gap:9px;z-index:40}
+.action-btn{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:22px}
+.action-btn:active,.action-btn.active{background:rgba(0,255,245,.35);border-color:#00fff5}
+#ventMenu{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(8,8,18,.97);border:2px solid #00fff5;border-radius:18px;padding:18px;z-index:80;display:none;text-align:center;min-width:240px}
+#ventMenu h3{margin:0 0 12px;color:#00fff5}
+.vent-btn{display:block;width:100%;margin:6px 0;padding:11px;background:rgba(0,255,245,.12);border:1px solid #00fff5;border-radius:10px;color:#fff;font-size:13px}
+#topBar{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:25;align-items:center}
+.hud-pill{background:rgba(0,0,0,.55);padding:5px 11px;border-radius:16px;font-size:11px;border:1px solid rgba(255,255,255,.12)}
+.icon-btn{width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center}
 .icon-btn.active{background:rgba(0,255,245,.25);border-color:#00fff5}
-#settingsPanel{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,20,.97);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:24px;z-index:90;display:none;width:90%;max-width:340px}
-#settingsPanel h3{margin-bottom:16px;color:#00fff5}
-.setting-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:14px}
-#voiceIndicator{position:absolute;bottom:190px;left:50%;transform:translateX(-50%);background:rgba(0,200,100,.25);border:1px solid #00ff88;padding:6px 14px;border-radius:20px;font-size:12px;z-index:30;display:none}
-@media(max-width:900px){
-  #joystickArea{display:block}
-  #actionButtons{display:flex}
-  #minimap{display:block;bottom:255px;right:14px;width:115px;height:115px}
-  #chatLogBox{height:145px}
-}
-@media(min-width:901px){
-  #joystickArea,#actionButtons{display:none!important}
-  #minimap{display:block;bottom:18px;right:18px}
-}
+#voiceIndicator{position:absolute;bottom:175px;left:50%;transform:translateX(-50%);background:rgba(0,180,80,.3);border:1px solid #00ff88;padding:5px 12px;border-radius:16px;font-size:11px;z-index:30;display:none}
+#roleBadge{position:absolute;top:50px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);padding:4px 14px;border-radius:12px;font-size:12px;z-index:25;border:1px solid rgba(255,255,255,.15)}
+#minimap{position:absolute;bottom:95px;right:12px;width:120px;height:120px;background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.15);border-radius:12px;z-index:25;display:none;overflow:hidden}
+#meetingUI{position:absolute;inset:0;background:rgba(0,0,0,.85);z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center}
+#meetingUI h2{color:#ff4444;margin-bottom:16px}
+.vote-btn{margin:6px;padding:10px 18px;background:rgba(255,255,255,.1);border:1px solid #fff;border-radius:10px;color:#fff}
+@media(max-width:900px){#joystickArea{display:block}#actionButtons{display:flex}#minimap{display:block;bottom:240px;right:12px;width:105px;height:105px}}
+@media(min-width:901px){#joystickArea,#actionButtons{display:none!important}#minimap{display:block;bottom:14px;right:14px}}
 </style>
 <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
 <div id="menuUI">
   <div class="box">
-    <h1>NEON SOHBET</h1>
-    <p class="sub">Proximity Voice • Vent • Power-ups • Akıcı Hareket</p>
+    <h1>NEON ARENA</h1>
+    <p class="sub">Voice • Roles • Tasks • Vents • 10 Systems</p>
     <input type="text" id="username" placeholder="Karakter adın" maxlength="14" autocomplete="off">
     <select id="colorSelect">
       <option value="#00d2ff">Buz Mavisi</option>
@@ -72,9 +61,8 @@ canvas{display:block;width:100%;height:100%}
       <option value="#39ff14">Zehir Yeşili</option>
       <option value="#f9a826">Güneş Turuncusu</option>
       <option value="#a200ff">Galaksi Moru</option>
-      <option value="#ff6bcb">Pembe Neon</option>
+      <option value="#ff6bcb">Pembe</option>
       <option value="#00ff9d">Aqua</option>
-      <option value="#ff9f1c">Turuncu Ateş</option>
     </select>
     <button class="btn" onclick="joinGame()">EVRENE KATIL</button>
   </div>
@@ -85,34 +73,35 @@ canvas{display:block;width:100%;height:100%}
   <div id="chatLogBox"></div>
   <div id="playerList"><h4>Oyuncular <span id="pCount">0</span></h4><div id="playerListContent"></div></div>
   <div id="topBar">
-    <div class="hud-pill" id="onlineCount">Çevrimiçi: 0</div>
-    <div class="icon-btn" id="micBtn" title="Mikrofon">🎤</div>
-    <div class="icon-btn" id="volBtn" title="Ses">🔊</div>
-    <div class="icon-btn" id="settingsBtn" title="Ayarlar">⚙️</div>
+    <div class="hud-pill" id="onlineCount">0</div>
+    <div class="hud-pill" id="timeDisplay">🌙</div>
+    <div class="icon-btn" id="micBtn">🎤</div>
+    <div class="icon-btn" id="volBtn">🔊</div>
+    <div class="icon-btn" id="meetingBtn" title="Acil Toplantı">🚨</div>
   </div>
-  <div id="voiceIndicator">Sesin açık • Konuşuluyor</div>
+  <div id="roleBadge">Rol: ???</div>
+  <div id="voiceIndicator">MIC AÇIK</div>
   <div id="inputArea">
-    <input type="text" id="chatInput" placeholder="Mesaj / komut yaz... (/help)" autocomplete="off">
+    <input type="text" id="chatInput" placeholder="Mesaj veya /help" autocomplete="off">
     <button id="sendBtn" onclick="sendMsg()">➤</button>
   </div>
   <div id="joystickArea"><div id="joystickBase"><div id="joystickKnob"></div></div></div>
   <div id="actionButtons">
     <div class="action-btn" id="btnVent">🌀</div>
-    <div class="action-btn" id="btnSprint">💨</div>
+    <div class="action-btn" id="btnTask">✅</div>
+    <div class="action-btn" id="btnPing">📍</div>
     <div class="action-btn" id="btnEmote">😎</div>
   </div>
   <div id="ventMenu">
     <h3>🌀 Vent Ağı</h3>
     <div id="ventButtons"></div>
-    <button class="vent-btn" id="closeVent">İptal / Çık</button>
+    <button class="vent-btn" id="closeVent">İptal</button>
   </div>
   <div id="minimap"><canvas id="minimapCanvas"></canvas></div>
-  <div id="settingsPanel">
-    <h3>Ayarlar</h3>
-    <div class="setting-row"><span>Oyun Sesi</span><input type="range" id="sfxVol" min="0" max="1" step="0.05" value="0.35"></div>
-    <div class="setting-row"><span>Mikrofon</span><input type="range" id="micVol" min="0" max="1" step="0.05" value="0.8"></div>
-    <div class="setting-row"><span>Proximity Voice</span><span id="proxStatus">Açık</span></div>
-    <button class="btn" style="margin-top:12px" onclick="document.getElementById('settingsPanel').style.display='none'">Kapat</button>
+  <div id="meetingUI">
+    <h2>🚨 ACİL DURUM TOPLANTISI</h2>
+    <div id="voteList"></div>
+    <p id="meetingTimer">45</p>
   </div>
 </div>
 
@@ -125,46 +114,40 @@ const mctx = minimapCanvas.getContext('2d');
 const chatInput = document.getElementById('chatInput');
 const chatLogBox = document.getElementById('chatLogBox');
 
-let gameState = null, myId = null;
-let camera = {x:0,y:0};
-let keys = {};
-let particles = [];
-let playerTrails = {};
-let vents = [], walls = [], mapSize = {width:3200,height:3200};
-let muted = false, micEnabled = false, localStream = null;
-let peers = {}; // WebRTC
-let inputDx = 0, inputDy = 0;
-let isSprinting = false;
-let nearVentId = null;
-let sfxVolume = 0.35;
+let gameState = null, myId = null, myRole = null;
+let camera = { x: 0, y: 0 };
+let keys = {}, inputDx = 0, inputDy = 0;
+let particles = [], playerTrails = {};
+let vents = [], walls = [], zones = [], tasks = [];
+let mapSize = { width: 3600, height: 3600 };
+let muted = false, micEnabled = false;
+let localStream = null, peers = {}, audioElements = {};
 
-// Sesler
+const iceConfig = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:stun.stunprotocol.org:3478' }
+  ]
+};
+
 const sfx = {
   msg: new Audio('https://cdn.pixabay.com/download/audio/2022/03/24/audio_5b87c2830e.mp3?filename=click-button-140881.mp3'),
   join: new Audio('https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c7443c.mp3?filename=success-1-6297.mp3'),
   leave: new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_7b6d0c0b3e.mp3?filename=interface-124464.mp3'),
-  vent: new Audio('https://cdn.pixabay.com/download/audio/2022/03/24/audio_5b87c2830e.mp3?filename=click-button-140881.mp3'),
-  power: new Audio('https://cdn.pixabay.com/download/audio/2022/03/24/audio_5b87c2830e.mp3?filename=click-button-140881.mp3')
+  vent: new Audio('https://cdn.pixabay.com/download/audio/2022/03/24/audio_5b87c2830e.mp3?filename=click-button-140881.mp3')
 };
-Object.values(sfx).forEach(a => { a.volume = sfxVolume; a.preload = 'auto'; });
+Object.values(sfx).forEach(a => { a.volume = 0.3; a.preload = 'auto'; });
 
 function resize() {
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
-  minimapCanvas.width = 130;
-  minimapCanvas.height = 130;
+  canvas.width = innerWidth; canvas.height = innerHeight;
+  minimapCanvas.width = 120; minimapCanvas.height = 120;
 }
-addEventListener('resize', resize);
-resize();
+addEventListener('resize', resize); resize();
 
-for (let i = 0; i < 140; i++) {
-  particles.push({
-    x: Math.random() * 3200,
-    y: Math.random() * 3200,
-    size: Math.random() * 1.6 + 0.4,
-    speed: Math.random() * 0.35 + 0.08,
-    alpha: Math.random() * 0.5 + 0.2
-  });
+for (let i = 0; i < 130; i++) {
+  particles.push({ x: Math.random()*3600, y: Math.random()*3600, size: Math.random()*1.5+0.4, speed: Math.random()*0.3+0.08, alpha: Math.random()*0.4+0.2 });
 }
 
 function joinGame() {
@@ -176,85 +159,91 @@ function joinGame() {
     document.getElementById('menuUI').style.display = 'none';
     document.getElementById('gameArea').style.display = 'block';
     requestAnimationFrame(gameLoop);
-    initVoice();
-  }, 380);
+  }, 350);
 }
 
-// ========== SOCKET ==========
+// ==================== SOCKET ====================
 socket.on('connect', () => myId = socket.id);
-socket.on('init', d => {
-  vents = d.vents || [];
-  walls = d.walls || [];
-  mapSize = d.map || mapSize;
+socket.on('init', (d) => {
+  myId = d.id; vents = d.vents; walls = d.walls; zones = d.zones; tasks = d.tasks; mapSize = d.map;
+  myRole = d.role;
+  document.getElementById('roleBadge').textContent = `Rol: ${myRole.toUpperCase()}`;
+  document.getElementById('roleBadge').style.borderColor = myRole === 'impostor' ? '#ff004c' : '#00fff5';
 });
-socket.on('gameState', s => {
-  gameState = s;
-  updatePlayerList();
-});
+socket.on('gameState', s => { gameState = s; updatePlayerList(); updateTimeDisplay(); });
 socket.on('playSound', t => { if (!muted && sfx[t]) { sfx[t].currentTime = 0; sfx[t].play().catch(()=>{}); } });
-socket.on('playCustomSound', url => {
-  if (muted) return;
-  try { const a = new Audio(url); a.volume = sfxVolume; a.play().catch(()=>{}); } catch(e){}
-});
+socket.on('playCustomSound', url => { if (muted) return; try { const a = new Audio(url); a.volume = 0.4; a.play().catch(()=>{}); } catch(e){} });
 socket.on('newChatMessage', d => {
-  const div = document.createElement('div');
-  div.className = 'log-msg';
-  div.innerHTML = `<span style="color:${d.color};font-weight:600">${d.name}</span> <span style="opacity:.45;font-size:11px">${d.time||''}</span><br>${esc(d.text)}`;
-  chatLogBox.appendChild(div);
-  chatLogBox.scrollTop = chatLogBox.scrollHeight;
+  const div = document.createElement('div'); div.className = 'log-msg';
+  div.innerHTML = `<span style="color:${d.color};font-weight:600">${d.name}</span> <small style="opacity:.4">${d.time}</small><br>${esc(d.text)}`;
+  chatLogBox.appendChild(div); chatLogBox.scrollTop = chatLogBox.scrollHeight;
 });
 socket.on('serverMessage', msg => {
-  const div = document.createElement('div');
-  div.className = 'sys-msg';
-  div.textContent = msg;
-  chatLogBox.appendChild(div);
-  chatLogBox.scrollTop = chatLogBox.scrollHeight;
+  const div = document.createElement('div'); div.className = 'sys-msg'; div.textContent = msg;
+  chatLogBox.appendChild(div); chatLogBox.scrollTop = chatLogBox.scrollHeight;
 });
-socket.on('playerCount', n => {
-  document.getElementById('onlineCount').textContent = `Çevrimiçi: ${n}`;
-  document.getElementById('pCount').textContent = n;
+socket.on('playerCount', n => { document.getElementById('onlineCount').textContent = n; document.getElementById('pCount').textContent = n; });
+socket.on('taskDone', id => { /* görsel feedback */ });
+socket.on('meetingStart', m => {
+  document.getElementById('meetingUI').style.display = 'flex';
+  const list = document.getElementById('voteList'); list.innerHTML = '';
+  for (const id in gameState.players) {
+    const p = gameState.players[id];
+    const btn = document.createElement('button'); btn.className = 'vote-btn';
+    btn.textContent = p.name; btn.onclick = () => socket.emit('vote', id);
+    list.appendChild(btn);
+  }
 });
-socket.on('powerupTaken', type => {
-  if (!muted && sfx.power) sfx.power.play().catch(()=>{});
-});
+socket.on('meetingEnd', () => { document.getElementById('meetingUI').style.display = 'none'; });
 
 function esc(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function updatePlayerList() {
   if (!gameState) return;
-  const el = document.getElementById('playerListContent');
-  el.innerHTML = '';
+  const el = document.getElementById('playerListContent'); el.innerHTML = '';
   for (const id in gameState.players) {
     const p = gameState.players[id];
     const d = document.createElement('div');
-    d.style.marginBottom = '3px';
-    let extra = '';
-    if (p.inVent) extra = ' 🌀';
-    if (p.ghostUntil > Date.now()) extra += ' 👻';
-    if (p.speedUntil > Date.now()) extra += ' 💨';
-    d.innerHTML = `<span style="color:${p.color}">●</span> ${p.name}${extra}`;
+    d.innerHTML = `<span style="color:${p.color}">●</span> ${p.name} ${p.inVent?'🌀':''} ${p.role==='impostor'&&myRole==='impostor'?'😈':''}`;
     el.appendChild(d);
   }
 }
 
-// ========== VOICE (WebRTC Proximity) ==========
+function updateTimeDisplay() {
+  if (!gameState) return;
+  const t = gameState.timeOfDay;
+  document.getElementById('timeDisplay').textContent = t < 0.25 || t > 0.75 ? '🌙 Gece' : '☀️ Gündüz';
+}
+
+// ==================== VOICE (OPTİMİZE) ====================
 async function initVoice() {
   try {
-    localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-    localStream.getAudioTracks()[0].enabled = false; // başlangıçta kapalı
+    localStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+        channelCount: 1,
+        sampleRate: 48000
+      },
+      video: false
+    });
+    localStream.getAudioTracks().forEach(t => t.enabled = false);
     socket.emit('voice-join');
-    document.getElementById('micBtn').classList.remove('active');
+    console.log('[VOICE] Hazır');
   } catch (e) {
-    console.warn('Mic izni yok', e);
+    console.error(e);
     document.getElementById('micBtn').textContent = '🎤🚫';
   }
 }
 
-socket.on('voice-ready', () => {});
-socket.on('voice-peer', async (peerId) => {
-  if (peers[peerId] || peerId === myId) return;
+socket.on('start-voice', initVoice);
+
+socket.on('voice-peer', (peerId) => {
+  if (peerId === myId || peers[peerId]) return;
   createPeer(peerId, true);
 });
+
 socket.on('voice-offer', async ({ from, offer }) => {
   if (!peers[from]) createPeer(from, false);
   const pc = peers[from];
@@ -263,444 +252,309 @@ socket.on('voice-offer', async ({ from, offer }) => {
   await pc.setLocalDescription(answer);
   socket.emit('voice-answer', { to: from, answer });
 });
+
 socket.on('voice-answer', async ({ from, answer }) => {
   if (peers[from]) await peers[from].setRemoteDescription(answer);
 });
+
 socket.on('voice-ice', async ({ from, candidate }) => {
   if (peers[from] && candidate) {
     try { await peers[from].addIceCandidate(candidate); } catch(e){}
   }
 });
+
 socket.on('voice-leave', (id) => {
-  if (peers[id]) {
-    peers[id].close();
-    delete peers[id];
-  }
+  if (peers[id]) { peers[id].close(); delete peers[id]; }
+  if (audioElements[id]) { audioElements[id].remove(); delete audioElements[id]; }
 });
 
 function createPeer(peerId, initiator) {
-  const pc = new RTCPeerConnection({
-    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-  });
+  const pc = new RTCPeerConnection(iceConfig);
   peers[peerId] = pc;
+  if (localStream) localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
 
-  if (localStream) {
-    localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
-  }
-
-  pc.onicecandidate = (e) => {
-    if (e.candidate) socket.emit('voice-ice', { to: peerId, candidate: e.candidate });
-  };
-
-  pc.ontrack = (e) => {
-    const audio = new Audio();
+  pc.onicecandidate = e => { if (e.candidate) socket.emit('voice-ice', { to: peerId, candidate: e.candidate }); };
+  pc.ontrack = e => {
+    let audio = audioElements[peerId];
+    if (!audio) {
+      audio = document.createElement('audio');
+      audio.autoplay = true; audio.playsInline = true;
+      document.body.appendChild(audio);
+      audioElements[peerId] = audio;
+    }
     audio.srcObject = e.streams[0];
-    audio.autoplay = true;
-    audio.volume = 0.8;
-    // Proximity volume ayarı gameLoop'ta yapılacak
-    audio.dataset.peerId = peerId;
-    document.body.appendChild(audio);
+    audio.play().catch(()=>{});
   };
 
   if (initiator) {
-    pc.createOffer().then(offer => {
-      pc.setLocalDescription(offer);
-      socket.emit('voice-offer', { to: peerId, offer });
+    pc.createOffer().then(o => pc.setLocalDescription(o)).then(() => {
+      socket.emit('voice-offer', { to: peerId, offer: pc.localDescription });
     });
   }
 }
 
-// Mic toggle
 document.getElementById('micBtn').onclick = () => {
   if (!localStream) return;
   micEnabled = !micEnabled;
-  localStream.getAudioTracks()[0].enabled = micEnabled;
+  localStream.getAudioTracks().forEach(t => t.enabled = micEnabled);
   document.getElementById('micBtn').classList.toggle('active', micEnabled);
-  document.getElementById('micBtn').textContent = micEnabled ? '🎤' : '🎤';
   document.getElementById('voiceIndicator').style.display = micEnabled ? 'block' : 'none';
 };
-
 document.getElementById('volBtn').onclick = () => {
   muted = !muted;
   document.getElementById('volBtn').textContent = muted ? '🔇' : '🔊';
-  document.getElementById('volBtn').classList.toggle('active', muted);
 };
+document.getElementById('meetingBtn').onclick = () => socket.emit('callMeeting');
 
-document.getElementById('settingsBtn').onclick = () => {
-  const p = document.getElementById('settingsPanel');
-  p.style.display = p.style.display === 'block' ? 'none' : 'block';
-};
-
-document.getElementById('sfxVol').oninput = (e) => {
-  sfxVolume = parseFloat(e.target.value);
-  Object.values(sfx).forEach(a => a.volume = sfxVolume);
-};
-
-// ========== KONTROLLER ==========
+// ==================== KONTROL ====================
 addEventListener('keydown', e => {
   if (document.activeElement === chatInput) {
     if (e.key === 'Enter') sendMsg();
-    socket.emit('typing', true);
-    return;
+    socket.emit('typing', true); return;
   }
   keys[e.key.toLowerCase()] = true;
-  if (e.key === 'Shift') isSprinting = true;
-  if (e.key.toLowerCase() === 'e' || e.key === ' ') tryVent();
+  if (e.key.toLowerCase() === 'e') tryVent();
+  if (e.key.toLowerCase() === 'f') tryTask();
+  if (e.key.toLowerCase() === 'q') tryPing();
 });
 addEventListener('keyup', e => {
-  if (document.activeElement === chatInput) {
-    socket.emit('typing', false);
-    return;
-  }
+  if (document.activeElement === chatInput) { socket.emit('typing', false); return; }
   delete keys[e.key.toLowerCase()];
-  if (e.key === 'Shift') isSprinting = false;
 });
 
-// Joystick
 const base = document.getElementById('joystickBase');
 const knob = document.getElementById('joystickKnob');
 let joyActive = false;
-
-function getPos(e) {
-  const t = e.touches ? e.touches[0] : e;
-  const r = base.getBoundingClientRect();
-  return { x: t.clientX - r.left, y: t.clientY - r.top };
-}
-base.addEventListener('touchstart', e => { e.preventDefault(); joyActive = true; moveKnob(getPos(e)); }, {passive:false});
-base.addEventListener('touchmove', e => { e.preventDefault(); if (joyActive) moveKnob(getPos(e)); }, {passive:false});
-base.addEventListener('touchend', e => {
-  e.preventDefault();
-  joyActive = false;
-  knob.style.transform = 'translate(-50%,-50%)';
-  inputDx = inputDy = 0;
-}, {passive:false});
-
+function getPos(e){ const t=e.touches?e.touches[0]:e; const r=base.getBoundingClientRect(); return {x:t.clientX-r.left,y:t.clientY-r.top}; }
+base.addEventListener('touchstart', e => { e.preventDefault(); joyActive=true; moveKnob(getPos(e)); }, {passive:false});
+base.addEventListener('touchmove', e => { e.preventDefault(); if(joyActive) moveKnob(getPos(e)); }, {passive:false});
+base.addEventListener('touchend', e => { e.preventDefault(); joyActive=false; knob.style.transform='translate(-50%,-50%)'; inputDx=inputDy=0; }, {passive:false});
 function moveKnob(pos) {
-  let dx = pos.x - 67.5, dy = pos.y - 67.5;
-  const max = 42, dist = Math.hypot(dx, dy);
-  if (dist > max) { dx = dx/dist*max; dy = dy/dist*max; }
-  knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-  inputDx = dx / max;
-  inputDy = dy / max;
+  let dx=pos.x-65, dy=pos.y-65; const max=40, dist=Math.hypot(dx,dy);
+  if(dist>max){dx=dx/dist*max;dy=dy/dist*max;}
+  knob.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+  inputDx=dx/max; inputDy=dy/max;
 }
 
-// Aksiyon butonları
 document.getElementById('btnVent').addEventListener('touchstart', e => { e.preventDefault(); tryVent(); });
-document.getElementById('btnSprint').addEventListener('touchstart', e => { e.preventDefault(); isSprinting = true; document.getElementById('btnSprint').classList.add('active'); });
-document.getElementById('btnSprint').addEventListener('touchend', e => { e.preventDefault(); isSprinting = false; document.getElementById('btnSprint').classList.remove('active'); });
-document.getElementById('btnEmote').addEventListener('touchstart', e => { e.preventDefault(); socket.emit('chat', '/emote 😎'); });
+document.getElementById('btnTask').addEventListener('touchstart', e => { e.preventDefault(); tryTask(); });
+document.getElementById('btnPing').addEventListener('touchstart', e => { e.preventDefault(); tryPing(); });
+document.getElementById('btnEmote').addEventListener('touchstart', e => { e.preventDefault(); socket.emit('chat','/emote 😎'); });
 
-// Input gönder (akıcı)
 setInterval(() => {
   if (document.activeElement === chatInput) return;
   let dx = inputDx, dy = inputDy;
-  if (keys.w || keys.arrowup) dy = -1;
-  if (keys.s || keys.arrowdown) dy = 1;
-  if (keys.a || keys.arrowleft) dx = -1;
-  if (keys.d || keys.arrowright) dx = 1;
-
-  // Sprint çarpanı server'da maxSpeed ile yönetiliyor, burada sadece yön
+  if (keys.w||keys.arrowup) dy=-1;
+  if (keys.s||keys.arrowdown) dy=1;
+  if (keys.a||keys.arrowleft) dx=-1;
+  if (keys.d||keys.arrowright) dx=1;
   socket.emit('input', { dx, dy });
-}, 1000 / 60);
+}, 1000/60);
 
 function sendMsg() {
   const v = chatInput.value.trim();
-  if (v) {
-    socket.emit('chat', v);
-    chatInput.value = '';
-    socket.emit('typing', false);
-  }
+  if (v) { socket.emit('chat', v); chatInput.value=''; socket.emit('typing',false); }
 }
 
-// ===== VENT =====
 function tryVent() {
-  if (!gameState || !gameState.players[myId]) return;
+  if (!gameState?.players[myId]) return;
   const me = gameState.players[myId];
-  if (me.inVent) {
-    openVentMenu(me.ventId);
-    return;
-  }
+  if (me.inVent) { openVentMenu(me.ventId); return; }
   for (const v of vents) {
-    if (Math.hypot(me.x - v.x, me.y - v.y) < 85) {
+    if (Math.hypot(me.x-v.x, me.y-v.y) < 90) {
       socket.emit('enterVent', v.id);
-      setTimeout(() => openVentMenu(v.id), 120);
+      setTimeout(() => openVentMenu(v.id), 100);
+      return;
+    }
+  }
+}
+function openVentMenu(id) {
+  const menu = document.getElementById('ventMenu');
+  const cont = document.getElementById('ventButtons'); cont.innerHTML = '';
+  const cur = vents.find(v => v.id === id);
+  if (!cur) return;
+  cur.connections.forEach(cid => {
+    const b = document.createElement('button'); b.className='vent-btn';
+    b.textContent = `Vent #${cid}`; b.onclick = () => { socket.emit('exitVent', cid); menu.style.display='none'; };
+    cont.appendChild(b);
+  });
+  menu.style.display = 'block';
+}
+document.getElementById('closeVent').onclick = () => { socket.emit('leaveVent'); document.getElementById('ventMenu').style.display='none'; };
+
+function tryTask() {
+  if (!gameState?.players[myId] || myRole === 'impostor') return;
+  const me = gameState.players[myId];
+  for (const t of (gameState.tasks || tasks)) {
+    if (t.completedBy?.includes(myId)) continue;
+    if (Math.hypot(me.x - t.x, me.y - t.y) < t.range) {
+      socket.emit('doTask', t.id);
       return;
     }
   }
 }
 
-function openVentMenu(currentId) {
-  const menu = document.getElementById('ventMenu');
-  const container = document.getElementById('ventButtons');
-  container.innerHTML = '';
-  const current = vents.find(v => v.id === currentId);
-  if (!current) return;
-  current.connections.forEach(cid => {
-    const btn = document.createElement('button');
-    btn.className = 'vent-btn';
-    btn.textContent = `Vent #${cid}  →`;
-    btn.onclick = () => {
-      socket.emit('exitVent', cid);
-      menu.style.display = 'none';
-    };
-    container.appendChild(btn);
-  });
-  menu.style.display = 'block';
+function tryPing() {
+  if (!gameState?.players[myId]) return;
+  const me = gameState.players[myId];
+  socket.emit('ping', { x: me.x, y: me.y });
 }
-document.getElementById('closeVent').onclick = () => {
-  socket.emit('leaveVent');
-  document.getElementById('ventMenu').style.display = 'none';
-};
 
-// ========== ÇİZİM ==========
+// ==================== RENDER ====================
 function gameLoop() {
-  ctx.fillStyle = '#07070f';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // Gece/gündüz karartma
+  const tod = gameState?.timeOfDay ?? 0.5;
+  const darkness = (tod < 0.2 || tod > 0.8) ? 0.45 : (tod < 0.3 || tod > 0.7) ? 0.25 : 0.05;
+  ctx.fillStyle = `rgb(${7 + darkness*20},${7 + darkness*15},${14})`;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
 
-  if (!gameState || !gameState.players[myId]) {
-    requestAnimationFrame(gameLoop);
-    return;
-  }
-
+  if (!gameState || !gameState.players[myId]) { requestAnimationFrame(gameLoop); return; }
   const me = gameState.players[myId];
   const now = Date.now();
 
-  // Kamera yumuşak takip
-  camera.x += (me.x - canvas.width/2 - camera.x) * 0.14;
-  camera.y += (me.y - canvas.height/2 - camera.y) * 0.14;
+  camera.x += (me.x - canvas.width/2 - camera.x) * 0.13;
+  camera.y += (me.y - canvas.height/2 - camera.y) * 0.13;
 
   ctx.save();
   ctx.translate(-camera.x, -camera.y);
 
   // Izgara
-  ctx.strokeStyle = 'rgba(255,255,255,0.035)';
-  ctx.lineWidth = 1;
-  for (let x = 0; x <= mapSize.width; x += 100) {
-    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x, mapSize.height); ctx.stroke();
-  }
-  for (let y = 0; y <= mapSize.height; y += 100) {
-    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(mapSize.width, y); ctx.stroke();
-  }
+  ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+  for (let x=0;x<=mapSize.width;x+=100){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,mapSize.height);ctx.stroke();}
+  for (let y=0;y<=mapSize.height;y+=100){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(mapSize.width,y);ctx.stroke();}
+
+  // Zone'lar
+  zones.forEach(z => {
+    ctx.fillStyle = z.type==='safe' ? 'rgba(0,255,100,0.08)' : z.type==='speed' ? 'rgba(0,200,255,0.08)' : 'rgba(255,50,50,0.1)';
+    ctx.fillRect(z.x, z.y, z.w, z.h);
+    ctx.strokeStyle = z.type==='safe' ? '#00ff64' : z.type==='speed' ? '#00c8ff' : '#ff3232';
+    ctx.strokeRect(z.x, z.y, z.w, z.h);
+  });
 
   // Duvarlar
   walls.forEach(w => {
-    ctx.fillStyle = 'rgba(70,70,110,0.75)';
-    ctx.fillRect(w.x, w.y, w.w, w.h);
-    ctx.strokeStyle = 'rgba(140,140,255,0.35)';
-    ctx.strokeRect(w.x, w.y, w.w, w.h);
+    ctx.fillStyle = 'rgba(60,60,100,0.8)';
+    ctx.fillRect(w.x,w.y,w.w,w.h);
   });
 
-  // Power-up'lar
-  if (gameState.powerups) {
-    gameState.powerups.forEach(pu => {
-      if (!pu.active) return;
-      const pulse = 1 + Math.sin(now / 200) * 0.15;
-      ctx.beginPath();
-      ctx.arc(pu.x, pu.y, 16 * pulse, 0, Math.PI*2);
-      const colors = { speed: '#00ff9d', glow: '#ff00c8', ghost: '#a0a0ff' };
-      ctx.fillStyle = colors[pu.type] || '#fff';
-      ctx.globalAlpha = 0.7;
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.font = '14px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText(pu.type === 'speed' ? '💨' : pu.type === 'glow' ? '✨' : '👻', pu.x, pu.y + 5);
-    });
-  }
+  // Task'lar
+  (gameState.tasks || []).forEach(t => {
+    if (t.completedBy?.includes(myId)) return;
+    ctx.beginPath(); ctx.arc(t.x, t.y, 18, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,220,0,0.3)'; ctx.fill();
+    ctx.strokeStyle = '#ffdc00'; ctx.stroke();
+    ctx.fillStyle = '#ffdc00'; ctx.font = '11px Poppins'; ctx.textAlign='center';
+    ctx.fillText(t.name, t.x, t.y - 24);
+  });
 
-  // Parçacıklar
+  // Powerup
+  (gameState.powerups || []).forEach(pu => {
+    if (!pu.active) return;
+    const pulse = 1 + Math.sin(now/180)*0.15;
+    ctx.beginPath(); ctx.arc(pu.x, pu.y, 15*pulse, 0, Math.PI*2);
+    const cols = {speed:'#00ff9d',glow:'#ff00c8',ghost:'#a0a0ff',shield:'#00d2ff'};
+    ctx.fillStyle = cols[pu.type]||'#fff'; ctx.globalAlpha=0.7; ctx.fill(); ctx.globalAlpha=1;
+  });
+
+  // Parçacık
   particles.forEach(p => {
-    p.y -= p.speed;
-    if (p.y < 0) p.y = mapSize.height;
-    ctx.globalAlpha = p.alpha;
-    ctx.fillStyle = '#fff';
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-    ctx.fill();
+    p.y -= p.speed; if (p.y < 0) p.y = mapSize.height;
+    ctx.globalAlpha = p.alpha; ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill();
   });
   ctx.globalAlpha = 1;
 
-  // Ventler
+  // Vent
   vents.forEach(v => {
-    const dist = me ? Math.hypot(me.x - v.x, me.y - v.y) : 999;
-    ctx.beginPath();
-    ctx.arc(v.x, v.y, 30, 0, Math.PI*2);
-    ctx.fillStyle = dist < 85 ? 'rgba(0,230,255,0.35)' : 'rgba(0,180,255,0.18)';
-    ctx.fill();
-    ctx.strokeStyle = '#00e5ff';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-    // Izgara
-    ctx.beginPath();
-    ctx.moveTo(v.x-16, v.y); ctx.lineTo(v.x+16, v.y);
-    ctx.moveTo(v.x, v.y-16); ctx.lineTo(v.x, v.y+16);
-    ctx.strokeStyle = 'rgba(0,255,255,0.7)';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    if (dist < 85 && !me.inVent) {
-      ctx.beginPath();
-      ctx.arc(v.x, v.y, 42, 0, Math.PI*2);
-      ctx.strokeStyle = 'rgba(0,255,255,0.85)';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      nearVentId = v.id;
-    }
+    const dist = Math.hypot(me.x-v.x, me.y-v.y);
+    ctx.beginPath(); ctx.arc(v.x,v.y,28,0,Math.PI*2);
+    ctx.fillStyle = dist<90 ? 'rgba(0,220,255,0.3)' : 'rgba(0,160,220,0.15)';
+    ctx.fill(); ctx.strokeStyle='#00e5ff'; ctx.lineWidth=2.5; ctx.stroke();
   });
+
+  // Pingler
+  for (const pid in (gameState.pings||{})) {
+    const ping = gameState.pings[pid];
+    const alpha = 1 - (now - ping.time)/5000;
+    if (alpha <= 0) continue;
+    ctx.globalAlpha = alpha;
+    ctx.beginPath(); ctx.arc(ping.x, ping.y, 22, 0, Math.PI*2);
+    ctx.strokeStyle = ping.color; ctx.lineWidth=3; ctx.stroke();
+    ctx.fillStyle = ping.color; ctx.font='12px Poppins'; ctx.textAlign='center';
+    ctx.fillText('📍 '+ping.name, ping.x, ping.y-28);
+    ctx.globalAlpha = 1;
+  }
 
   // Oyuncular
   for (const id in gameState.players) {
     const p = gameState.players[id];
     if (p.inVent) continue;
-
     const isGhost = p.ghostUntil > now;
     const isGlow = p.glowUntil > now;
-    const isSpeed = p.speedUntil > now;
 
-    // Trail
-    if (!playerTrails[id]) playerTrails[id] = [];
-    playerTrails[id].push({x: p.x, y: p.y});
-    if (playerTrails[id].length > 14) playerTrails[id].shift();
+    if (!playerTrails[id]) playerTrails[id]=[];
+    playerTrails[id].push({x:p.x,y:p.y});
+    if (playerTrails[id].length>12) playerTrails[id].shift();
+    playerTrails[id].forEach((t,i) => {
+      ctx.globalAlpha = (i/playerTrails[id].length)*0.25;
+      ctx.beginPath(); ctx.arc(t.x,t.y,16*(i/playerTrails[id].length),0,Math.PI*2);
+      ctx.fillStyle=p.color; ctx.fill();
+    });
+    ctx.globalAlpha = isGhost ? 0.3 : 1;
 
-    for (let i = 0; i < playerTrails[id].length; i++) {
-      const t = playerTrails[id][i];
-      const a = (i / playerTrails[id].length) * (isGhost ? 0.12 : 0.28);
-      ctx.beginPath();
-      ctx.arc(t.x, t.y, 17 * (i / playerTrails[id].length), 0, Math.PI*2);
-      ctx.fillStyle = p.color;
-      ctx.globalAlpha = a;
-      ctx.fill();
-    }
-    ctx.globalAlpha = isGhost ? 0.35 : 1;
+    ctx.beginPath(); ctx.arc(p.x,p.y,26,0,Math.PI*2);
+    ctx.fillStyle=p.color; ctx.shadowBlur=isGlow?32:18; ctx.shadowColor=p.color; ctx.fill(); ctx.shadowBlur=0;
+    ctx.beginPath(); ctx.arc(p.x-6,p.y-7,8,0,Math.PI*2); ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.fill();
+    ctx.globalAlpha=1;
 
-    // Gövde
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 27, 0, Math.PI*2);
-    ctx.fillStyle = p.color;
-    ctx.shadowBlur = isGlow ? 35 : 20;
-    ctx.shadowColor = p.color;
-    ctx.fill();
-    ctx.shadowBlur = 0;
-
-    // Cam
-    ctx.beginPath();
-    ctx.arc(p.x - 7, p.y - 8, 9, 0, Math.PI*2);
-    ctx.fillStyle = 'rgba(255,255,255,0.38)';
-    ctx.fill();
-
-    ctx.globalAlpha = 1;
-
-    // İsim
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 14px Poppins';
-    ctx.textAlign = 'center';
-    ctx.fillText(p.name, p.x, p.y + 50);
-
-    // Status ikonları
-    let statusY = p.y - 48;
-    if (isSpeed) { ctx.font = '16px Arial'; ctx.fillText('💨', p.x - 18, statusY); }
-    if (isGlow) { ctx.font = '16px Arial'; ctx.fillText('✨', p.x + 18, statusY); }
-    if (isGhost) { ctx.font = '16px Arial'; ctx.fillText('👻', p.x, statusY - 18); }
-
-    if (p.isTyping && !p.msg) {
-      ctx.fillStyle = 'rgba(255,255,255,0.7)';
-      ctx.font = 'italic 12px Poppins';
-      ctx.fillText('yazıyor...', p.x, p.y - 42);
+    ctx.fillStyle='#fff'; ctx.font='bold 13px Poppins'; ctx.textAlign='center';
+    ctx.fillText(p.name, p.x, p.y+46);
+    if (p.role==='impostor' && (myRole==='impostor' || id===myId)) {
+      ctx.fillStyle='#ff004c'; ctx.font='10px Poppins'; ctx.fillText('IMPOSTOR', p.x, p.y+58);
     }
 
-    if (p.emote) {
-      ctx.font = '30px Arial';
-      ctx.fillText(p.emote, p.x, p.y - 55);
-    }
-
+    if (p.isTyping && !p.msg) { ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.font='italic 11px Poppins'; ctx.fillText('yazıyor...',p.x,p.y-38); }
+    if (p.emote) { ctx.font='28px Arial'; ctx.fillText(p.emote,p.x,p.y-52); }
     if (p.msg) {
-      ctx.font = '13px Poppins';
-      const w = ctx.measureText(p.msg).width + 26;
-      ctx.fillStyle = 'rgba(255,255,255,0.93)';
-      roundRect(ctx, p.x - w/2, p.y - 82, w, 34, 11);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.moveTo(p.x-8, p.y-48); ctx.lineTo(p.x+8, p.y-48); ctx.lineTo(p.x, p.y-38);
-      ctx.fill();
-      ctx.fillStyle = '#111';
-      ctx.fillText(p.msg, p.x, p.y - 60);
+      ctx.font='12px Poppins'; const w=ctx.measureText(p.msg).width+22;
+      ctx.fillStyle='rgba(255,255,255,0.92)';
+      roundRect(ctx,p.x-w/2,p.y-78,w,30,9); ctx.fill();
+      ctx.fillStyle='#111'; ctx.fillText(p.msg,p.x,p.y-58);
     }
   }
-
   ctx.restore();
 
-  // Proximity voice volume ayarı
+  // Proximity volume
   updateVoiceVolumes(me);
-
   drawMinimap();
   requestAnimationFrame(gameLoop);
 }
 
 function updateVoiceVolumes(me) {
-  if (!gameState || !me) return;
-  document.querySelectorAll('audio[data-peer-id]').forEach(audio => {
-    const pid = audio.dataset.peerId;
+  if (!gameState||!me) return;
+  for (const pid in audioElements) {
+    const audio = audioElements[pid];
     const p = gameState.players[pid];
-    if (!p || p.inVent) {
-      audio.volume = 0;
-      return;
-    }
-    const dist = Math.hypot(me.x - p.x, me.y - p.y);
-    // 0-600 birim arası proximity
-    let vol = 1 - (dist / 700);
-    vol = Math.max(0, Math.min(1, vol));
-    audio.volume = vol * 0.85;
-  });
+    if (!p || p.inVent) { audio.volume=0; continue; }
+    const dist = Math.hypot(me.x-p.x, me.y-p.y);
+    let vol = Math.max(0, 1 - dist/800);
+    audio.volume = muted ? 0 : vol * 0.85;
+  }
 }
 
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x+r, y);
-  ctx.arcTo(x+w, y, x+w, y+h, r);
-  ctx.arcTo(x+w, y+h, x, y+h, r);
-  ctx.arcTo(x, y+h, x, y, r);
-  ctx.arcTo(x, y, x+w, y, r);
-  ctx.closePath();
-}
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
 
 function drawMinimap() {
   if (!gameState) return;
-  mctx.fillStyle = 'rgba(8,8,16,0.92)';
-  mctx.fillRect(0, 0, 130, 130);
-  const sx = 130 / mapSize.width;
-  const sy = 130 / mapSize.height;
-
-  // Ventler
-  mctx.fillStyle = '#00e5ff';
-  vents.forEach(v => {
-    mctx.beginPath();
-    mctx.arc(v.x * sx, v.y * sy, 3.5, 0, Math.PI*2);
-    mctx.fill();
-  });
-
-  // Powerups
-  if (gameState.powerups) {
-    gameState.powerups.forEach(pu => {
-      if (!pu.active) return;
-      mctx.fillStyle = '#ff0';
-      mctx.beginPath();
-      mctx.arc(pu.x * sx, pu.y * sy, 2.5, 0, Math.PI*2);
-      mctx.fill();
-    });
-  }
-
-  // Oyuncular
+  mctx.fillStyle='rgba(6,6,14,0.9)'; mctx.fillRect(0,0,120,120);
+  const sx=120/mapSize.width, sy=120/mapSize.height;
+  vents.forEach(v=>{mctx.fillStyle='#00e5ff';mctx.beginPath();mctx.arc(v.x*sx,v.y*sy,3,0,Math.PI*2);mctx.fill();});
   for (const id in gameState.players) {
-    const p = gameState.players[id];
-    if (p.inVent) continue;
-    mctx.beginPath();
-    mctx.arc(p.x * sx, p.y * sy, id === myId ? 4.5 : 3, 0, Math.PI*2);
-    mctx.fillStyle = id === myId ? '#fff' : p.color;
-    mctx.fill();
+    const p=gameState.players[id]; if(p.inVent) continue;
+    mctx.beginPath(); mctx.arc(p.x*sx,p.y*sy,id===myId?4:2.5,0,Math.PI*2);
+    mctx.fillStyle=id===myId?'#fff':p.color; mctx.fill();
   }
 }
-
-chatInput.addEventListener('focus', () => socket.emit('typing', true));
-chatInput.addEventListener('blur', () => socket.emit('typing', false));
 </script>
 </body>
 </html>
